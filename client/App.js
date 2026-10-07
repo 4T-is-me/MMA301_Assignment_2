@@ -1,5 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
+import Toast from 'react-native-toast-message';
 import AppNavigator from './src/navigation/AppNavigator';
 import { ThemeProvider, useTheme } from './src/contexts/ThemeContext';
 
@@ -10,6 +11,7 @@ function AppContent() {
     <NavigationContainer theme={theme}>
       <AppNavigator />
       <StatusBar style={theme.dark ? 'light' : 'dark'} />
+      <Toast />
     </NavigationContainer>
   );
 }
