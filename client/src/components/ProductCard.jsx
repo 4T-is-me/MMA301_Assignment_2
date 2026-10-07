@@ -4,33 +4,33 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../contexts/ThemeContext';
 import { styles } from '../styles/ProductListStyles';
 import ratingStars from '../utils/ratingStars';
+import { COLORS } from '../constants/theme';
 
-export default function ProductCard({ product, onPress }) {
+function ProductCard({ product, onPress }) {
     const { theme } = useTheme();
-    const accent = theme.dark ? '#93BDB7' : '#467C78';
-    // Nếu không có thumbnail thì lấy ảnh đầu tiên.
+    const accent = theme.colors.primary;
     const imageUri = product.thumbnail || product.images?.[0];
     const discount = product.discountPercentage || 0;
-    // Tính giá sau khi áp dụng % giảm giá.
+    // Calculate the price after applying the discount percentage.
     const finalPrice = product.price * (1 - discount / 100);
-    // API trả về mảng đánh giá, dùng độ dài để hiển thị số lượt.
+    // The API returns an array of reviews; use its length to display the count.
     const reviewCount = product.reviews?.length || 0;
 
     return (
         <View style={[
             styles.card,
-            { backgroundColor: theme.colors.card, borderColor: theme.colors.border },
+            { backgroundColor: theme.colors.card, borderColor: theme.colors.border, shadowColor: theme.colors.text },
         ]}>
         <Pressable
             accessibilityRole="button"
             accessibilityLabel={`View ${product.title}`}
-            onPress={onPress}
+            onPress={() => onPress(product.id)}
             style={({ pressed }) => [
                 styles.cardLink,
                 pressed && styles.cardPressed,
             ]}
         >
-            <View style={[styles.imageWrapper, { backgroundColor: theme.dark ? '#262B2A' : '#F3F5F3' }]}>
+            <View style={[styles.imageWrapper, { backgroundColor: theme.colors.inputBg }]}>
                 {imageUri && (
                     <Image
                         source={{ uri: imageUri }}
@@ -69,7 +69,7 @@ export default function ProductCard({ product, onPress }) {
                         <Text style={[styles.originalPrice, { color: theme.colors.subText }]}>
                             ${product.price.toFixed(2)}
                         </Text>
-                        <Text style={[styles.discountPercentage, { color: accent }]}>
+                        <Text style={[styles.discountPercentage, { color: theme.dark ? theme.colors.text : accent, backgroundColor: theme.colors.welcomeBg }]}>
                             -{Math.round(discount)}%
                         </Text>
                     </View>
@@ -77,17 +77,20 @@ export default function ProductCard({ product, onPress }) {
                         ${finalPrice.toFixed(2)}
                     </Text>
                 </View>
-                {/* Nút chỉ để hiển thị, chưa có chức năng giỏ hàng. */}
+                {/* button to display, no cart functionality yet. */}
                 <Pressable
                     disabled
                     accessibilityRole="button"
                     accessibilityLabel="Add to cart (coming soon)"
                     accessibilityState={{ disabled: true }}
-                    style={[styles.cartButton, { backgroundColor: theme.dark ? '#263C39' : '#E6EFEC' }]}
+                    style={[styles.cartButton, { backgroundColor: accent }]}
                 >
-                    <Ionicons name="cart-outline" size={18} color={accent} />
+                    <Ionicons name="cart-outline" size={18} color={COLORS.dark.text} />
                 </Pressable>
             </View>
         </View>
     );
 }
+
+// Do not re-render the component when product and the onPress function remain unchanged.
+export default React.memo(ProductCard);
