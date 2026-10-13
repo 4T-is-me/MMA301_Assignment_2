@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 import ProductCard from '../components/ProductCard';
 import { useTheme } from '../contexts/ThemeContext';
-import { getProducts } from '../services/productService';
+import { ProductService } from '../services/productService';
 import { styles } from '../styles/ProductListStyles';
 import { Constants } from '../constants/constants';
 import { COLORS } from '../constants/theme';
@@ -99,7 +99,7 @@ export default function ProductListScreen({ navigation }) {
         setError(null);
         try {
             // first page always skip = 0.
-            const page = await getProducts({ category: selectedCategory, limit: Constants.PAGE_SIZE, skip: 0, signal: controller.signal });
+            const page = await ProductService.getProducts({ category: selectedCategory, limit: Constants.PAGE_SIZE, skip: 0, signal: controller.signal });
             if (controller.signal.aborted) return;
             setProducts(page.products);
             setSkip(page.skip + page.products.length);
@@ -125,7 +125,7 @@ export default function ProductListScreen({ navigation }) {
         setLoadingMore(true);
         setError(null);
         try {
-            const page = await getProducts({ category: selectedCategory, limit: Constants.PAGE_SIZE, skip, signal: controller.signal });
+            const page = await ProductService.getProducts({ category: selectedCategory, limit: Constants.PAGE_SIZE, skip, signal: controller.signal });
             if (controller.signal.aborted) return;
             // Append a new page;  ID appears only once.
             setProducts((current) => {
@@ -155,7 +155,7 @@ export default function ProductListScreen({ navigation }) {
         setRefreshing(true);
         setError(null);
         try {
-            const page = await getProducts({ category: selectedCategory, limit: Constants.PAGE_SIZE, skip: 0, signal: controller.signal });
+            const page = await ProductService.getProducts({ category: selectedCategory, limit: Constants.PAGE_SIZE, skip: 0, signal: controller.signal });
             if (controller.signal.aborted) return;
             // Refresh replaces the old list and resets pagination to the first page.
             setProducts(page.products);
