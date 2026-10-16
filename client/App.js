@@ -6,6 +6,7 @@ import { ThemeProvider, useTheme } from './src/contexts/ThemeContext';
 import { CartProvider } from './src/contexts/CartContext';
 import { AuthProvider } from './src/contexts/AuthContext';
 import { WishlistProvider } from './src/contexts/WishlistContext';
+import { OrderProvider } from './src/contexts/OrderContext';
 
 function AppContent() {
   const { theme } = useTheme();
@@ -25,7 +26,9 @@ export default function App() {
       <AuthProvider>
         <WishlistProvider>
           <CartProvider>
+          <OrderProvider>
             <AppContent />
+          </OrderProvider>
           </CartProvider>
         </WishlistProvider>
       </AuthProvider>

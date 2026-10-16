@@ -18,7 +18,7 @@ const TAB_ICONS = {
     ProductList: ['bag-handle-outline', 'bag-handle'],
     Wishlist: ['sparkles-outline', 'sparkles'],
     AIRecommendation: ['color-wand-outline', 'color-wand'],
-    Cart: ['cart-outline', 'cart'],
+    Orders: ['receipt-outline', 'receipt'],
     Settings: ['settings-outline', 'settings'],
 };
 
@@ -68,7 +68,11 @@ function MainTabs() {
             component={AIRecommendationScreen}
             options={{ title: 'AI Recommendation' }}
         />
-        <Tab.Screen name="Cart" component={CartScreen} options={{ title: 'Cart' }} />
+        <Tab.Screen
+            name="Orders"
+            component={OrdersScreen}
+            options={{ title: 'Orders' }}
+        />
         <Tab.Screen
             name="Settings"
             component={SettingsScreen}
@@ -105,11 +109,6 @@ export default function AppNavigator() {
             name="Checkout"
             component={CheckoutScreen}
             options={{ title: 'Checkout' }}
-        />
-        <Stack.Screen
-            name="Orders"
-            component={OrdersScreen}
-            options={{ title: 'Orders' }}
         />
         <Stack.Screen
             name="Cart"

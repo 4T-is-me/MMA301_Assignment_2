@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import React, { useLayoutEffect, useState } from 'react';
+import { View, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { styles } from '../styles/CartStyles';
 import { useTheme } from '../contexts/ThemeContext';
 import { useCart } from '../contexts/CartContext';
@@ -9,8 +9,40 @@ import { formatCurrency } from '../utils/formatCurrency';
 export default function CartScreen({ navigation }) {
     const { theme } = useTheme();
     const { cartItems, itemCount, totalPrice, clearCart, total } = useCart();
+    const isEmpty = cartItems.length === 0;
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <TouchableOpacity
+                    onPress={() => handleClearCart()}
+                    disabled={isEmpty}
+                    accessibilityRole="button"
+                    accessibilityLabel="Clear cart"
+                    accessibilityState={{ disabled: isEmpty }}
+                    style={[styles.clearHeaderButton, { backgroundColor: theme.colors.welcomeBg, opacity: isEmpty ? 0.4 : 1 }]}
+                >
+                    <Text style={[styles.clearHeaderButtonText, { color: theme.colors.primary }]}>Clear cart</Text>
+                </TouchableOpacity>
+            ),
+        });
+    }, [navigation, clearCart, isEmpty, theme]);
 
     const discountAmount = total - totalPrice;
+    const handleCheckout = () => {
+        navigation.navigate('Checkout');
+    };
+    const handleClearCart = () => {
+        Alert.alert(
+            'Clear cart',
+            'Are you sure you want to clear your cart?',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'Clear', onPress: () => clearCart() },
+            ]
+        )
+
+    }
 
     return (
         <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -30,11 +62,11 @@ export default function CartScreen({ navigation }) {
                     {/* Footer Container with Bottom Tab Padding */}
                     <View style={[
                         styles.cartFooter,
-                        { 
-                            backgroundColor: theme.colors.card, 
+                        {
+                            backgroundColor: theme.colors.card,
                             borderTopColor: theme.colors.border,
                             // Extra padding to clear the bottom tab bar
-                            paddingBottom: 24 
+                            paddingBottom: 24
                         }
                     ]}>
                         <View style={styles.summaryRow}>
@@ -68,13 +100,14 @@ export default function CartScreen({ navigation }) {
                             </Text>
                         </View>
 
-                        <TouchableOpacity 
-                            onPress={clearCart} 
-                            style={[styles.clearButton, { backgroundColor: theme.colors.primary }]}
-                            activeOpacity={0.8}
+
+                        <TouchableOpacity
+                            onPress={handleCheckout}
+                            disabled={cartItems.length === 0}
+                            style={[styles.checkoutButton, { backgroundColor: theme.colors.primary }]}
                         >
-                            <Text style={styles.clearButtonText}>
-                                Clear Cart
+                            <Text style={styles.checkoutButtonText}>
+                                Proceed to Checkout
                             </Text>
                         </TouchableOpacity>
                     </View>

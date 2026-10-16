@@ -3,11 +3,9 @@ import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
     container: { flex: 1 },
+    clearHeaderButton: { marginRight: 12, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 10 },
+    clearHeaderButtonText: { fontSize: 13, fontWeight: '600' },
     cartItemContainer: { flex: 1, gap: 16 },
-    emptyCartContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, gap: 16 },
-    emptyCartText: { fontSize: 16, textAlign: 'center' },
-    totalPrice: { fontSize: 16, fontWeight: 'bold' },
-    cartFooter: { paddingHorizontal: 20, paddingVertical: 12, borderTopWidth: 1, gap: 10, },
     clearButton: { padding: 14,  borderRadius: 10, alignItems: 'center',},
     cartFooter: {
         padding: 16,
@@ -46,14 +44,14 @@ export const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
-    clearButton: {
+    checkoutButton: {
         marginTop: 12,
         paddingVertical: 12,
         borderRadius: 8,
         alignItems: 'center',
         justifyContent: 'center',
     },
-    clearButtonText: {
+    checkoutButtonText: {
         color: '#fff',
         fontWeight: 'bold',
         fontSize: 16,
