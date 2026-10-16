@@ -33,7 +33,7 @@ export default function CartItem({ product }) {
                             </View>
                             {/* stock */}
                             <View style={styles.cartItemStock}>
-                                <Text style={styles.stock}>Stock: {product.stock}</Text>
+                                <Text style={[styles.stock, { color: theme.colors.subText }]}>Stock: {product.stock}</Text>
                             </View>
                         </View>
                     </View>
@@ -65,12 +65,12 @@ export default function CartItem({ product }) {
 
                     <View style={styles.cartItemPriceWrapper}>
                         <Text  style={[  styles.cartItemPrice,  { color: theme.colors.primary } ]}  >
-                            {formatCurrency(finalPrice.toFixed(2))}
+                            {formatCurrency(finalPrice)}
                         </Text>
 
                         {product.discountPercentage > 0 && (
                             <Text style={{ color: theme.colors.subText,  textDecorationLine: 'line-through' }} >
-                                {formatCurrency(product.price.toFixed(2))}
+                                {formatCurrency(product.price)}
                             </Text>
                         )}
                     </View>
@@ -159,7 +159,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 16,
         fontWeight: '600',
-        backgroundColor: '#fff',
     },
     cartItemQuantityButton: {
         width:35,

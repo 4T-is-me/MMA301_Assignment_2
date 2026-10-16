@@ -53,4 +53,5 @@ export const styles = StyleSheet.create({
     discountPercentage: { fontSize: 10, fontWeight: '700', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 3, overflow: 'hidden' },
     finalPrice: { fontSize: 20, fontWeight: '700', marginTop: 4 },
     cartButton: { width: 34, height: 34, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
+    favoriteButton: {position: 'absolute', top: 8, right: 8, width:36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center', elevation: 3, zIndex: 2},
 });

@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../contexts/ThemeContext";
 import { styles } from "../styles/SettingsStyles";
-
 export default function SettingsScreen() {
     const { theme, themeMode, toggleTheme } = useTheme();
     const isDarkMode = themeMode === "dark";

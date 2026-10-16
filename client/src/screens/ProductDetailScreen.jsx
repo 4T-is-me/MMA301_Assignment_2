@@ -12,11 +12,14 @@ import ImageViewerHeader from '../components/ImageViewerHeader';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Constants } from '../constants/constants';
 import { useCart } from '../contexts/CartContext';
+import { useWishlist } from '../contexts/WishlistContext';
+import { formatCurrency } from '../utils/formatCurrency';
 
 export default function ProductDetailScreen({ route, navigation }) {
     const { productId } = route.params || {};
     const { theme } = useTheme();
     const { addToCart } = useCart();
+    const { isFavorite, addItem, removeItem } = useWishlist();
     const insets = useSafeAreaInsets();
     const accent = theme.colors.primary;
 
@@ -25,6 +28,7 @@ export default function ProductDetailScreen({ route, navigation }) {
     const [counter, setCounter] = useState(1);
     const [isVisible, setIsVisible] = useState(false);
     const [activeTab, setActiveTab] = useState('description');
+    const [wishlistLoading, setWishlistLoading] = useState(false);
 
     useEffect (() => {
         const controller = new AbortController();
@@ -61,7 +65,28 @@ export default function ProductDetailScreen({ route, navigation }) {
             text1: 'Added to cart!',
             text2: `${product.title} added successfully.`,
         });
+    }
 
+    const handleToggleWishlist = async () => {
+        if(!product || wishlistLoading) return;
+        const wasFavorite = isFavorite(product.id);
+        try {
+            setWishlistLoading(true);
+            if(wasFavorite) {
+                await removeItem(product.id);
+            }else {
+                await addItem(product);
+            }
+            Toast.show({
+                type: 'success',
+                text1: wasFavorite ? 'Removed from wishlist!' : 'Added to wishlist!',
+            })
+        } catch (error) {
+            console.error("Error toggling wishlist", error);
+            Toast.show({ type: 'error', text1: 'Unable to toggle wishlist.', text2: 'Check your connection and tap Retry!' });
+        } finally {
+            setWishlistLoading(false);
+        }
     }
 
     // Trạng thái đang tải
@@ -146,11 +171,18 @@ export default function ProductDetailScreen({ route, navigation }) {
                 
                 <View style={styles.productImageButton}>
                     <TouchableOpacity style={styles.imageAction} onPress={() => navigation.goBack()} accessibilityLabel="Go back" accessibilityRole="button">
-                        <Ionicons name="arrow-back-outline" size={24} color={"#000"} />
+                        <Ionicons name="arrow-back-outline" size={24} color={theme.colors.primary} />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.imageAction} onPress={() => navigation.navigate('Cart')} accessibilityLabel="Open cart" accessibilityRole="button">
-                        <Ionicons name="cart-outline" size={24}  color={"#000"} />
-                    </TouchableOpacity>
+                    <View style={styles.cartButton}>
+                        <TouchableOpacity style={styles.imageAction} onPress={() => navigation.navigate('Cart')} accessibilityLabel="Open cart" accessibilityRole="button">
+                            <Ionicons name="cart-outline" size={24}  color={theme.colors.primary} />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.imageAction} onPress={handleToggleWishlist} disabled={wishlistLoading}>
+                            <Ionicons name={isFavorite(product.id) ? "heart": "heart-outline"} size={24} color={isFavorite(product.id) ? '#ef4444' : theme.colors.primary} />
+                        </TouchableOpacity>
+
+                    </View>
                 </View>
 
             </View>
@@ -194,10 +226,10 @@ export default function ProductDetailScreen({ route, navigation }) {
 
                 {/* price + price discount + discount percentage */}
                 <View style={styles.priceRow}>
-                    <Text style={[styles.price, { color: theme.colors.text }]}>${discountPrice.toFixed(2)}</Text>
+                    <Text style={[styles.price, { color: theme.colors.text }]}>{formatCurrency(discountPrice)}</Text>
                     {discount > 0 && <View style={styles.discountRow}>
                         <Text style={[styles.originalPrice, { color: theme.colors.subText }]}>
-                            ${product.price.toFixed(2)}
+                            {formatCurrency(product.price)}
                         </Text>
                     </View>}
                     {discount > 0 && <View style={styles.discountPercentageRow}>

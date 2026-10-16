@@ -46,4 +46,5 @@ export const styles = StyleSheet.create({
     shipping: { fontSize: 14, lineHeight: 23 },
     returnProduct: { fontSize: 14, lineHeight: 23 },
     noReviews: { fontSize: 14, textAlign: 'center', paddingVertical: 24 },
+    cartButton: { flexDirection: 'row', alignItems: 'center', gap: 12 },
 });

@@ -4,6 +4,8 @@ import Toast from 'react-native-toast-message';
 import AppNavigator from './src/navigation/AppNavigator';
 import { ThemeProvider, useTheme } from './src/contexts/ThemeContext';
 import { CartProvider } from './src/contexts/CartContext';
+import { AuthProvider } from './src/contexts/AuthContext';
+import { WishlistProvider } from './src/contexts/WishlistContext';
 
 function AppContent() {
   const { theme } = useTheme();
@@ -20,9 +22,13 @@ function AppContent() {
 export default function App() {
   return (
     <ThemeProvider>
-      <CartProvider>
-        <AppContent />
-      </CartProvider>
+      <AuthProvider>
+        <WishlistProvider>
+          <CartProvider>
+            <AppContent />
+          </CartProvider>
+        </WishlistProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
