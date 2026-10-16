@@ -2,6 +2,7 @@ import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "reac
 import { useTheme } from "../contexts/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useCart } from "../contexts/CartContext";
+import {formatCurrency} from "../utils/formatCurrency";
 
 export default function CartItem({ product }) {
     const { theme } = useTheme();
@@ -64,12 +65,12 @@ export default function CartItem({ product }) {
 
                     <View style={styles.cartItemPriceWrapper}>
                         <Text  style={[  styles.cartItemPrice,  { color: theme.colors.primary } ]}  >
-                            ${finalPrice.toFixed(2)}
+                            {formatCurrency(finalPrice.toFixed(2))}
                         </Text>
 
                         {product.discountPercentage > 0 && (
                             <Text style={{ color: theme.colors.subText,  textDecorationLine: 'line-through' }} >
-                                ${product.price.toFixed(2)}
+                                {formatCurrency(product.price.toFixed(2))}
                             </Text>
                         )}
                     </View>

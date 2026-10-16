@@ -1,9 +1,45 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CartContext = createContext();
+const CART_KEY = "@techstore_cart";
 
 export const CartProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    //read data when app starts
+    useEffect(() => {
+        const loadCart = async () => {
+            try {
+                const cartData = await AsyncStorage.getItem(CART_KEY);
+                if (cartData !== null) {
+                    const parsedCart = JSON.parse(cartData);
+                    if(Array.isArray(parsedCart)) {
+                        setCartItems(parsedCart);
+                    }
+                }
+            } catch (error) {
+                console.error("Error loading cart", error);
+            }finally {
+                setLoading(false);
+            }
+        }
+        loadCart();
+    }, [])
+
+    //save cart data when cart items change
+    useEffect(() => {
+        if (loading) return;
+        const saveCart = async () => {
+            try {
+                await AsyncStorage.setItem(CART_KEY, JSON.stringify(cartItems));
+            } catch (error) {
+                console.error("Error saving cart", error);
+            }
+        }
+        saveCart();
+    }, [cartItems, loading])
 
     //add to cart
     const addToCart = (product, quantity = 1) => {
@@ -84,9 +120,14 @@ export const CartProvider = ({ children }) => {
     }, 0);
 
     const total = cartItems.reduce((total, item) => total + item.quantity * item.price, 0);
+    
+    //avoid presenting cartProvider before data is loaded
+    if(loading) {
+        return null;
+    }
 
     return (
-        <CartContext.Provider value={{ cartItems, addToCart, updateCartItem, removeItem, clearCart, itemCount, totalPrice, total }}>
+        <CartContext.Provider value={{ cartItems, addToCart,updateCartItem, removeItem, clearCart, itemCount, totalPrice, total, loading }}>
             {children}
         </CartContext.Provider>
     )
