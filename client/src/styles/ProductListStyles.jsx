@@ -3,6 +3,8 @@ import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
     container: { flex: 1, width: '100%', minWidth: 0 },
+    aiFab: { position: 'absolute', right: 20, bottom: 24, zIndex: 10, minHeight: 56, paddingHorizontal: 20, borderRadius: 28, flexDirection: 'row', alignItems: 'center', gap: 10, elevation: 6, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.18, shadowRadius: 10 },
+    aiFabText: { color: '#FFF', fontSize: 14, fontWeight: '700' },
     catalogControls: { width: '100%', minWidth: 0, paddingHorizontal: 16, paddingTop: 18 },
     searchBarContainer: { width: '100%', flexDirection: 'row', alignItems: 'center', gap: 10 },
     searchBar: { flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 16, paddingLeft: 14, minHeight: 50 },
@@ -24,7 +26,7 @@ export const styles = StyleSheet.create({
     sectionTitle: { fontSize: 20, fontWeight: '700' },
     resultCount: { fontSize: 12 },
     list: { flex: 1 },
-    listContent: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 24 },
+    listContent: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 96 },
     columnWrapper: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'stretch' },
     statusContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 },
     statusText: { textAlign: 'center', marginTop: 12 },

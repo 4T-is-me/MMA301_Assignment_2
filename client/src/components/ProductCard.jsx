@@ -10,7 +10,7 @@ import { useWishlist } from '../contexts/WishlistContext';
 import Toast from 'react-native-toast-message';
 import { ProductService } from '../services/productService';
 import { useCart } from '../contexts/CartContext';
-function ProductCard({ product, onPress }) {
+function ProductCard({ product, onPress, style }) {
     const { theme } = useTheme();
     const { addToCart } = useCart();
     const { isFavorite, addItem, removeItem } = useWishlist();
@@ -65,6 +65,7 @@ function ProductCard({ product, onPress }) {
         <View style={[
             styles.card,
             { backgroundColor: theme.colors.card, borderColor: theme.colors.border, shadowColor: theme.colors.text },
+            style,
         ]}>
         <Pressable
             accessibilityRole="button"

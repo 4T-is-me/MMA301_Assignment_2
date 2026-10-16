@@ -306,6 +306,15 @@ export default function ProductListScreen({ navigation }) {
                     }
                 />
             )}
+            <Pressable
+                onPress={() => navigation.navigate('AIRecommendation')}
+                accessibilityRole="button"
+                accessibilityLabel="Find products with AI"
+                style={({ pressed }) => [styles.aiFab, { backgroundColor: accent, opacity: pressed ? 0.85 : 1 }]}
+            >
+                <Ionicons name="sparkles" size={24} color="#FFF" />
+                <Text style={styles.aiFabText}>Ask AI</Text>
+            </Pressable>
         </View>
     );
 }
