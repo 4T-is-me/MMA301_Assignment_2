@@ -31,6 +31,8 @@ export const styles = StyleSheet.create({
     statusContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 },
     statusText: { textAlign: 'center', marginTop: 12 },
     retryButton: { paddingHorizontal: 24, paddingVertical: 12, borderRadius: 12, marginTop: 14 },
+    errorBanner: { marginHorizontal: 16, marginTop: 12, padding: 12, borderWidth: 1, borderRadius: 12, flexDirection: 'row', alignItems: 'center', gap: 12 },
+    errorMessage: { flex: 1 },
     listFooter: { alignItems: 'center', paddingVertical: 20 },
     card: {
         width: '48%', borderWidth: 1, borderRadius: 18, padding: 10, marginBottom: 16,

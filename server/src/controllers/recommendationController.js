@@ -20,7 +20,7 @@ export const recommendProducts = async (req, res) => {
             data: { recommendations },
         });
     } catch (error) {
-        const timedOut = error.code === 'GEMINI_TIMEOUT';
+        const timedOut = error.code === 'GEMINI_TIMEOUT' || error.code === 'CATALOG_TIMEOUT';
         const unavailable = error.status === 429 || error.status === 503;
         const configurationError = error.code === 'GEMINI_CONFIG';
         const status = timedOut ? 504 : unavailable ? 503 : configurationError ? 500 : 502;

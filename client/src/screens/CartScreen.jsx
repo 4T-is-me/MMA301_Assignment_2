@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { styles } from '../styles/CartStyles';
 import { useTheme } from '../contexts/ThemeContext';
@@ -12,6 +12,12 @@ export default function CartScreen({ navigation }) {
     const isEmpty = cartItems.length === 0;
 
     useLayoutEffect(() => {
+        const handleClearCart = () => {
+            Alert.alert('Clear cart', 'Are you sure you want to clear your cart?', [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'Clear', onPress: clearCart },
+            ]);
+        };
         navigation.setOptions({
             headerRight: () => (
                 <TouchableOpacity
@@ -32,17 +38,6 @@ export default function CartScreen({ navigation }) {
     const handleCheckout = () => {
         navigation.navigate('Checkout');
     };
-    const handleClearCart = () => {
-        Alert.alert(
-            'Clear cart',
-            'Are you sure you want to clear your cart?',
-            [
-                { text: 'Cancel', style: 'cancel' },
-                { text: 'Clear', onPress: () => clearCart() },
-            ]
-        )
-
-    }
 
     return (
         <View style={[styles.container, { backgroundColor: theme.colors.background }]}>

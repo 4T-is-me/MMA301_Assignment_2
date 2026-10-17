@@ -54,7 +54,7 @@ const requestNotificationPermission = () => {
     return permissionRequest;
 };
 
-// Present immediately. Expo Go must use its own default Android channel.
+// Schedule once after one second. Expo Go uses its own default channel.
 const scheduleOrderNotification = async (orderId) => {
     const granted = await requestNotificationPermission();
     if (!granted) {
@@ -69,7 +69,12 @@ const scheduleOrderNotification = async (orderId) => {
             color: '#7C66FF',
             data: { orderId, type: 'order-confirmed' },
         },
-        trigger:  Platform.OS === 'android' && !isRunningInExpoGo() ? { channelId: CHANNEL_ID } : null,
+        trigger: {
+            type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+            seconds: 1,
+            repeats: false,
+            ...(Platform.OS === 'android' && !isRunningInExpoGo() ? { channelId: CHANNEL_ID } : {}),
+        },
     });
     return notificationId;
 }

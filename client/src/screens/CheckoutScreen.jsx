@@ -28,9 +28,13 @@ export default function CheckoutScreen({ navigation }) {
         try {
             const newOrder = await placeOrder(cartItems, totalPrice);
             clearCart();
+            let notificationNote = '';
             try {
                 await NotificationService.sendOrderNotification(newOrder.id);
             } catch (notificationError) {
+                notificationNote = notificationError.code === 'PERMISSION_DENIED'
+                    ? '\nNotifications are disabled. Enable them in device settings to receive updates.'
+                    : '\nYour order was saved, but its notification could not be sent.';
                 console.warn(
                     'Order saved, but notification failed:',
                     notificationError
@@ -38,11 +42,11 @@ export default function CheckoutScreen({ navigation }) {
             }
             Alert.alert(
                 'Payment successful!',
-                `Payment for order #${newOrder.id} is complete.`,
+                `Payment for order #${newOrder.id} is complete.${notificationNote}`,
                 [
                     {
                         text: 'View Orders',
-                        onPress: () => navigation.navigate('Orders'),
+                        onPress: () => navigation.navigate('MainTabs', { screen: 'Orders' }),
                     },
                 ]
             );

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const OrderContext = createContext();
@@ -7,6 +7,8 @@ const ORDER_KEY = '@techstore_order';
 export const OrderProvider = ({ children }) => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const ordersRef = useRef([]);
+    const saveQueue = useRef(Promise.resolve());
 
     useEffect(() => {
         const loadOrders = async () => {
@@ -15,7 +17,12 @@ export const OrderProvider = ({ children }) => {
                 if (orderData !== null) {
                     const parsedOrder = JSON.parse(orderData);
                     if(Array.isArray(parsedOrder)) {
-                        setOrders(parsedOrder);
+                        const restored = parsedOrder.filter(order => order && typeof order.id === 'string'
+                            && Array.isArray(order.items) && order.items.every(item => item && Number.isFinite(item.price)
+                                && Number.isInteger(item.quantity) && item.quantity > 0)
+                            && Number.isFinite(order.totalPrice) && order.totalPrice >= 0);
+                        ordersRef.current = restored;
+                        setOrders(restored);
                     }
                 }
             } catch (error) {
@@ -43,16 +50,16 @@ export const OrderProvider = ({ children }) => {
             status: 'Paid',
             createdAt: new Date().toISOString(),
         }
-        const updatedOrders = [newOrder, ...orders];
-
-        // Lưu thành công trước khi cập nhật UI
-        await AsyncStorage.setItem(
-            ORDER_KEY,
-            JSON.stringify(updatedOrders)
-        );
-        setOrders(updatedOrders);
-
-        return newOrder;
+        // Serialize saves so concurrent calls cannot overwrite another order.
+        const pending = saveQueue.current.then(async () => {
+            const updatedOrders = [newOrder, ...ordersRef.current];
+            await AsyncStorage.setItem(ORDER_KEY, JSON.stringify(updatedOrders));
+            ordersRef.current = updatedOrders;
+            setOrders(updatedOrders);
+            return newOrder;
+        });
+        saveQueue.current = pending.catch(() => {});
+        return pending;
     }
 
     if (loading) {

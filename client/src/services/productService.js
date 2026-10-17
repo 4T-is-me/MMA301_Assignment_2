@@ -16,7 +16,12 @@ export const ProductService = {
     })
 
     const { products, total, skip: responseSkip, limit: responseLimit } = response.data;
-    if (!Array.isArray(products) || !Number.isInteger(total) || total < 0
+    if (!Array.isArray(products) || products.some(product => !product
+        || !Number.isInteger(product.id) || product.id <= 0
+        || typeof product.title !== 'string' || typeof product.category !== 'string'
+        || !Number.isFinite(product.price) || product.price < 0
+        || !Number.isInteger(product.stock) || product.stock < 0)
+        || !Number.isInteger(total) || total < 0
         || !Number.isInteger(responseSkip) || responseSkip < 0
         || !Number.isInteger(responseLimit) || responseLimit < 0) {
         throw new Error('Invalid products response');

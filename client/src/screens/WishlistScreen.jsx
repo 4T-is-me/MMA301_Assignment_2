@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList } from 'react-native';
+import { View, Text, FlatList, Button } from 'react-native';
 import { styles } from '../styles/WishlistStyles';
 import { useTheme } from '../contexts/ThemeContext';
 import { useWishlist } from '../contexts/WishlistContext';
@@ -7,10 +7,11 @@ import ProductCard from '../components/ProductCard';
 import { ProductService } from '../services/productService';
 export default function WishlistScreen({ navigation }) {
     const { theme } = useTheme();
-    const { wishlist, loading, error } = useWishlist();
+    const { wishlist, loading, error, reloadWishlist } = useWishlist();
     const [products, setProducts] = useState([]);
     const [productsLoading, setProductsLoading] = useState(false);
     const [productsError, setProductsError] = useState(null);
+    const [retryAttempt, setRetryAttempt] = useState(0);
 
     const handleNavigateToProductDetail = (productId) => {
         navigation.navigate('ProductDetail', { productId });
@@ -58,7 +59,7 @@ export default function WishlistScreen({ navigation }) {
         return () => {
             active = false;
         };
-    }, [wishlist, loading, error]);
+    }, [wishlist, loading, error, retryAttempt]);
 
 
     if (loading || productsLoading) {
@@ -77,6 +78,7 @@ export default function WishlistScreen({ navigation }) {
                 <Text style={{ color: theme.colors.text }}>
                     Failed to load wishlist.
                 </Text>
+                <Button title="Retry" onPress={() => error ? reloadWishlist() : setRetryAttempt(attempt => attempt + 1)} />
             </View>
         );
     }

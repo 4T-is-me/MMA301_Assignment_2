@@ -8,7 +8,6 @@ import { COLORS } from '../constants/theme';
 import { formatCurrency } from '../utils/formatCurrency';
 import { useWishlist } from '../contexts/WishlistContext';
 import Toast from 'react-native-toast-message';
-import { ProductService } from '../services/productService';
 import { useCart } from '../contexts/CartContext';
 function ProductCard({ product, onPress, style }) {
     const { theme } = useTheme();
@@ -55,7 +54,7 @@ function ProductCard({ product, onPress, style }) {
             })
         } catch (error) {
             console.error("Error toggling wishlist", error);
-            Toast.show({ type: 'error', text1: 'Unable to toggle wishlist.', text2: 'Check your connection and tap Retry!' });
+            Toast.show({ type: 'error', text1: 'Unable to toggle wishlist.', text2: 'Check your connection and tap the heart again.' });
         } finally {
             setWishlistLoading(false);
         }

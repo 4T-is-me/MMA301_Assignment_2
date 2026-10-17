@@ -10,26 +10,30 @@ export const AuthProvider = ({ children}) => {
     const [error, setError] = useState(null);
 
     useEffect(()=> {
+        let active = true;
         const unsubcribe = onAuthStateChanged(auth,
             async (firebaseUser) =>{
+                if (!active) return;
                 if(firebaseUser) {
                     setUser(firebaseUser);
                     setLoading(false);
                     setError(null);
                     return;
                 }
+                setUser(null);
                 try {
                     setLoading(true);
                     setError(null);
                     await signInAnonymously(auth);
                 } catch (error) {
+                    if (!active) return;
                     console.error("Error signing in anonymously", error);
                     setError(error.message);
                     setLoading(false);
                 }
             }
         )
-        return () => unsubcribe();
+        return () => { active = false; unsubcribe(); };
     }, [])
 
     return (

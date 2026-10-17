@@ -6,23 +6,28 @@ const WishlistContext = createContext();
 
 export const WishlistProvider =({children}) => {
     const { user, loading: authLoading } = useAuth();
+    const userId = user?.uid;
     const [wishlist, setWishlist] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [reloadKey, setReloadKey] = useState(0);
+    const reloadWishlist = () => setReloadKey(key => key + 1);
 
     useEffect(()=> {
         let active = true;
         const loadWishlist = async () => {
             if(authLoading) return;
-                if(!user) {
+                if(!userId) {
                     setWishlist([]);
+                    setError(null);
                     setLoading(false);
                     return;
                 }
             try {
                 setLoading(true);
                 setError(null);
-                const wishlistData = await WishlistService.getWishlist(user.uid);
+                setWishlist([]);
+                const wishlistData = await WishlistService.getWishlist(userId);
                 if(active) {
                     setWishlist(wishlistData);
                 }
@@ -42,7 +47,7 @@ export const WishlistProvider =({children}) => {
         return () => {
             active = false;
         }
-    }, [user?.uid, authLoading])
+    }, [userId, authLoading, reloadKey])
 
     //add item to wishlist
     const addItem = async(product)=> {
@@ -53,8 +58,8 @@ export const WishlistProvider =({children}) => {
             const wishlistData = await WishlistService.getWishlist(user.uid);
             setWishlist(wishlistData);
         } catch (error) {
-            setError(err.message);
-            throw err;
+            setError(error.message);
+            throw error;
         }
     }
     // remove item from wishlist
@@ -66,8 +71,8 @@ export const WishlistProvider =({children}) => {
             const wishlistData = await WishlistService.getWishlist(user.uid);
             setWishlist(wishlistData);
         } catch (error) {
-            setError(err.message);
-            throw err;
+            setError(error.message);
+            throw error;
         }
     }
 
@@ -77,7 +82,7 @@ export const WishlistProvider =({children}) => {
     }
 
     return(
-        <WishlistContext.Provider value={{wishlist, loading, error, addItem, removeItem, isFavorite}}>
+        <WishlistContext.Provider value={{wishlist, loading, error, addItem, removeItem, isFavorite, reloadWishlist}}>
             {children}
         </WishlistContext.Provider>
     )

@@ -13,7 +13,7 @@ const getWishlistConllection = (userId) => {
 const addToWishlist = async (userId, product) => {
     const wishlistRef = getWishlistConllection(userId);
 
-    await setDoc(doc(wishlistRef, String(product.id)), {
+    const record = {
         productId: product.id,
         title: product.title,
         price: product.price,
@@ -23,7 +23,10 @@ const addToWishlist = async (userId, product) => {
         stock: product.stock,
         rating: product.rating,
         addedAt: new Date().toISOString(),
-    })
+    };
+    // DummyJSON omits optional fields (for example brand); Firestore rejects undefined.
+    await setDoc(doc(wishlistRef, String(product.id)),
+        Object.fromEntries(Object.entries(record).filter(([, value]) => value !== undefined)));
 }
 
 //lấy danh sách sản phẩm yêu thích

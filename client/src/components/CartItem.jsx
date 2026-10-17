@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useTheme } from "../contexts/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useCart } from "../contexts/CartContext";
@@ -6,7 +6,7 @@ import {formatCurrency} from "../utils/formatCurrency";
 
 export default function CartItem({ product }) {
     const { theme } = useTheme();
-    const { removeItem, updateCartItem, addToCart } = useCart();
+    const { removeItem, updateCartItem } = useCart();
 
     const imageUri = product.thumbnail || product.image || product.images?.[0];
     const finalPrice = product.price * (1 - product.discountPercentage / 100);
@@ -49,7 +49,7 @@ export default function CartItem({ product }) {
 
                     {/* quantities */}
                     <View style={styles.cartItemQuantityWrapper}>
-                        <TouchableOpacity disabled={product.quantity <= 1} onPress={() => updateCartItem(product.id, product.quantity - 1)} style={[styles.cartItemQuantityButton, { backgroundColor: theme.colors.primaryLight }]}>
+                        <TouchableOpacity onPress={() => updateCartItem(product.id, product.quantity - 1)} style={[styles.cartItemQuantityButton, { backgroundColor: theme.colors.primaryLight }]}>
                             <Ionicons name="remove" size={20} color={theme.colors.primary} />
                         </TouchableOpacity>
 

@@ -181,6 +181,8 @@ export default function ProductListScreen({ navigation }) {
     }
 
     useEffect(() => {
+        // Starts an external API request; loading state belongs to that request lifecycle.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         loadProducts();
         return () => controllerRef.current?.abort();
     }, [loadProducts]);
@@ -236,6 +238,14 @@ export default function ProductListScreen({ navigation }) {
                     })}
                 </ScrollView>
             </View>
+            {!loading && error && products.length > 0 && (
+                <View style={[styles.errorBanner, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
+                    <Text accessibilityRole="alert" style={[styles.errorMessage, { color: theme.colors.text }]}>{error} Check your connection and tap Retry.</Text>
+                    <TouchableOpacity accessibilityRole="button" accessibilityLabel="Retry products" onPress={retryProducts} style={[styles.retryButton, { backgroundColor: accent }]}>
+                        <Text style={{ color: COLORS.dark.text }}>Retry</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
             {loading ? (
                 <View style={styles.statusContainer}>
                     <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -248,7 +258,7 @@ export default function ProductListScreen({ navigation }) {
                     <Text style={[styles.statusText, { color: theme.colors.text }]}>
                         {error}
                     </Text>
-                    <TouchableOpacity accessibilityRole="button" onPress={retryProducts} style={[styles.retryButton, { backgroundColor: accent }]}>
+                    <TouchableOpacity accessibilityRole="button" accessibilityLabel="Retry products" onPress={retryProducts} style={[styles.retryButton, { backgroundColor: accent }]}>
                         <Text style={{ color: COLORS.dark.text }}>Retry</Text>
                     </TouchableOpacity>
                 </View>
@@ -269,14 +279,7 @@ export default function ProductListScreen({ navigation }) {
                                     <ActivityIndicator color={accent} />
                                     <Text style={[styles.statusText, { color: theme.colors.subText }]}>Loading more products...</Text>
                                 </>
-                            ) : error ? (
-                                <>
-                                    <Text style={[styles.statusText, { color: theme.colors.text }]}>{error}</Text>
-                                    <TouchableOpacity accessibilityRole="button" onPress={retryProducts} style={[styles.retryButton, { backgroundColor: accent }]}>
-                                        <Text style={{ color: COLORS.dark.text }}>Retry</Text>
-                                    </TouchableOpacity>
-                                </>
-                            ) : !hasMore && products.length > 0 ? (
+                            ) : !error && !hasMore && products.length > 0 ? (
                                 <Text style={{ color: theme.colors.subText }}>No more products</Text>
                             ) : null}
                         </View>

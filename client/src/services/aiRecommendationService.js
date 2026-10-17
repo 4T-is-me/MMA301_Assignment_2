@@ -24,7 +24,10 @@ export const AIRecommendationService = {
         }
 
         const recommendations = response.data?.data?.recommendations;
-        if (!Array.isArray(recommendations)) {
+        if (!Array.isArray(recommendations) || recommendations.some(item =>
+            !item || !item.product || !Number.isInteger(item.product.id)
+            || typeof item.product.title !== 'string' || !Number.isFinite(item.product.price)
+            || item.product.price < 0 || typeof item.reason !== 'string')) {
             throw new Error('Invalid AI recommendations response.');
         }
 

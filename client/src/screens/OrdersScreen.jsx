@@ -1,11 +1,10 @@
 
 import React from 'react';
-import { View, Text, FlatList, Image, ScrollView,} from 'react-native';
+import { View, Text, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../styles/OrdersStyles';
 import { useTheme } from '../contexts/ThemeContext';
 import { useOrder } from '../contexts/OrderContext';
-import { formatCurrency } from '../utils/formatCurrency';
 import OrderCard from '../components/OrderCard';
 
 export default function OrdersScreen() {

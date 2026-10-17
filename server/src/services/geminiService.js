@@ -17,7 +17,11 @@ const getGeminiClient = () => {
 };
 
 export const getAIRecommendation = async (userPrompt) => {
-    const products = await getAllProducts();
+    // Validate configuration before any network call; one deadline covers both services.
+    const ai = getGeminiClient();
+    const timeoutMs = getTimeoutMs();
+    const signal = AbortSignal.timeout(timeoutMs);
+    const products = await getAllProducts(signal);
     const catalog = products.map(({ id, title, price, category, brand, description, rating, stock }) => ({
         id, title, price, category, brand, description, rating, stock,
     }));
@@ -44,10 +48,6 @@ export const getAIRecommendation = async (userPrompt) => {
         {"recommendations":[{"productId":1,"reason":"Why this product matches"}]}
     `;
 
-    const ai = getGeminiClient();
-    const timeoutMs = getTimeoutMs();
-    const signal = AbortSignal.timeout(timeoutMs);
-
     let response;
     try {
         response = await ai.models.generateContent({
@@ -71,13 +71,14 @@ export const getAIRecommendation = async (userPrompt) => {
     if (!response.text?.trim()) throw new Error('Gemini returned an empty response.');
 
     const result = JSON.parse(response.text);
-    if (!Array.isArray(result.recommendations)) throw new Error('Invalid Gemini response format.');
+    if (!result || !Array.isArray(result.recommendations)) throw new Error('Invalid Gemini response format.');
 
     const productMap = new Map(products.map(product => [product.id, product]));
     const seen = new Set();
 
     const recommendations = result.recommendations
         .filter(item => {
+            if (!item || typeof item !== 'object') return false;
             const product = productMap.get(item.productId);
             if (!product || product.stock <= 0 || seen.has(item.productId)) return false;
             if (typeof item.reason !== 'string' || !item.reason.trim()) return false;

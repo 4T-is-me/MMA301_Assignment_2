@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, ActivityIndicator, ScrollView, TouchableOpacity, TextInput, Image } from 'react-native';
+import { View, Text, Button, ActivityIndicator, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { styles } from '../styles/ProductDetailStyles';
 import { ProductService } from '../services/productService';
 import { useTheme } from '../contexts/ThemeContext';
@@ -29,23 +29,30 @@ export default function ProductDetailScreen({ route, navigation }) {
     const [isVisible, setIsVisible] = useState(false);
     const [activeTab, setActiveTab] = useState('description');
     const [wishlistLoading, setWishlistLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [retryAttempt, setRetryAttempt] = useState(0);
 
     useEffect (() => {
         const controller = new AbortController();
         const fetchProductDetail = async () => {
             if (!productId) {
+                setProduct(null);
                 setLoading(false);
                 return;
             }
             try {
                 setLoading(true);
+                setProduct(null);
+                setError(null);
                 const product = await ProductService.getProductById(productId, controller.signal);
-                setProduct(product);
+                if (!controller.signal.aborted) setProduct(product);
             } catch (error) {
+                if (controller.signal.aborted) return;
                 console.error(error);
+                setError('Unable to load product. Check your connection and tap Retry.');
                 Toast.show({ type: 'error', text1: 'Unable to load product.', text2: 'Check your connection and tap Retry!' });
             } finally {
-                setLoading(false);
+                if (!controller.signal.aborted) setLoading(false);
             }
         }
         fetchProductDetail();
@@ -53,7 +60,7 @@ export default function ProductDetailScreen({ route, navigation }) {
         return () => {
             controller.abort();
         }
-    }, [productId]);
+    }, [productId, retryAttempt]);
 
     const handleAddToCart = () => {
         const quantity = Number(counter);
@@ -83,7 +90,7 @@ export default function ProductDetailScreen({ route, navigation }) {
             })
         } catch (error) {
             console.error("Error toggling wishlist", error);
-            Toast.show({ type: 'error', text1: 'Unable to toggle wishlist.', text2: 'Check your connection and tap Retry!' });
+            Toast.show({ type: 'error', text1: 'Unable to toggle wishlist.', text2: 'Check your connection and tap the heart again.' });
         } finally {
             setWishlistLoading(false);
         }
@@ -101,7 +108,8 @@ export default function ProductDetailScreen({ route, navigation }) {
     if (!product) {
         return (
             <View style={styles.centerContainer}>
-                <Text style={styles.errorText}>{'Product not found'}</Text>
+                <Text style={[styles.errorText, { color: theme.colors.text }]}>{error || 'Product not found'}</Text>
+                {error && <Button title="Retry" onPress={() => setRetryAttempt(attempt => attempt + 1)} />}
                 <Button title="Go to Home" onPress={() => navigation.goBack()} />
             </View>
         );
@@ -178,7 +186,7 @@ export default function ProductDetailScreen({ route, navigation }) {
                             <Ionicons name="cart-outline" size={24}  color={theme.colors.primary} />
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.imageAction} onPress={handleToggleWishlist} disabled={wishlistLoading}>
+                        <TouchableOpacity style={styles.imageAction} onPress={handleToggleWishlist} disabled={wishlistLoading} accessibilityRole="button" accessibilityLabel={isFavorite(product.id) ? 'Remove from wishlist' : 'Add to wishlist'}>
                             <Ionicons name={isFavorite(product.id) ? "heart": "heart-outline"} size={24} color={isFavorite(product.id) ? '#ef4444' : theme.colors.primary} />
                         </TouchableOpacity>
 

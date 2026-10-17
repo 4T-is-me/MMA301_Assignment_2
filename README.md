@@ -1,96 +1,69 @@
-# TechStore — Integrated E-Commerce Mobile App
-## 1. Overview
-TechStore is the planned MMA301 Assignment 2 integrated e-commerce mobile app. It focuses on a technology-products catalog and the assignment's end-to-end workflow. The project uses React Native + Expo + JavaScript. This README describes intended design; feature status remains **Planned** until implementation and evidence exist.
+# TechStore — MMA301 Assignment 2
 
-## 2. Assignment Requirements
-The assignment workflow is: restore designed state and load a remote catalog; browse/search with FlatList pagination/infinite scrolling and refresh, including loading/empty/error/retry states; view product detail; add/update/remove cart items with correct total and item count; persist state according to design; use Firebase for at least one real business state; connect Gemini/GenAI to catalog/user context and validate/match output; demonstrate a business notification event with permission handling; handle network/Firebase/AI/permission failures without crashing and provide appropriate feedback; and create/run a release-like Android build or lecturer-approved evidence.
+Expo React Native / JavaScript shopping app with DummyJSON, Context state, AsyncStorage, Firebase wishlist, local notifications, and an Express/Gemini recommendation backend. Checkout is a **mock** workflow: `Paid` is a local demo status, not evidence of a real payment.
 
-The RTM retains assignment IDs R01–R12. See `RTM.xlsx` for requirement mapping and planned minimum tests. No implementation evidence is claimed here.
+## Current implementation (M1–M7)
 
-## 3. Core Workflow
-Catalog → Detail → Cart → Persisted / Business State
-Planned integrations: Remote Data, State Management, Firebase, Notification, Gemini / GenAI, Debugging, and Release. Checkout/payment is mock only; no real payment gateway is planned.
+- Catalog: DummyJSON service, FlatList `limit`/`skip` pagination, category filtering, pull-to-refresh, retry and end guards. Text search filters **loaded products**, not the entire remote catalog.
+- Product detail: image viewer, description/shipping/review tabs, quantity and cart/wishlist actions.
+- Cart: Context actions with stock clamps, derived item count/gross/discounted totals, AsyncStorage restoration and persistence.
+- Firebase: anonymous Authentication and user-scoped Firestore wishlist (`users/{uid}/wishlist`). Product details are refreshed from DummyJSON. No live Firebase rules/security claim is made without isolated tests.
+- Orders: mock checkout stores order snapshots in **local AsyncStorage**, then clears cart and requests a local notification. History is device-local, not Firestore-backed. Notification failure does not undo a saved order.
+- AI: input → Express backend → real catalog context → Gemini JSON → IDs/stock/reasons checked against catalog → product cards. Default model is `gemini-3.5-flash-lite`; environment can override it. API credentials stay on the server.
+- Navigation: existing React Navigation stack plus tabs. Theme preference persists locally. The catalog FAB opens AI; checkout opens Orders through MainTabs.
 
-## 4. Features
-- [ ] **Planned:** Product catalog from DummyJSON (read-only source of truth)
-- [ ] **Planned:** FlatList pagination/infinite scrolling using `limit` + `skip`, pull-to-refresh, search/category filter
-- [ ] **Planned:** Loading, empty, error, retry, and end-of-list handling
-- [ ] **Planned:** Product details and add-to-cart actions
-- [ ] **Planned:** Cart add/update/remove, derived totals/count, AsyncStorage persistence
-- [ ] **Planned:** Firebase Firestore wishlist (save, remove, read)
-- [ ] **Planned:** Firestore-backed mock orders (create/read items, total, createdAt, status `CONFIRMED`)
-- [ ] **Planned:** Mock order list and mock checkout; no real payment system
-- [ ] **Planned:** Gemini product recommendations using real catalog context and validated product IDs
-- [ ] **Planned:** Order-confirmation notification with permission handling
-- [ ] **Not Started:** Two real debugging records and retest evidence
-- [ ] **Not Started:** Release-like Android build/install/run evidence
-## 5. Screens
-Planned screens/modules:
-1. `ProductListScreen` — catalog, search/filter, FlatList pagination, refresh and load states.
-2. `ProductDetailScreen` — product details and cart action; optional AI entry point.
-3. `CartScreen` — items, quantity, remove, derived totals, persistence, checkout.
-4. `WishlistScreen` — Firebase-backed saved products with loading/error handling.
-5. `OrdersScreen` — mock order status, date, and total.
-6. AI Recommendation UI — shopping need input and validated recommendations.
-7. Checkout / PaymentScreen — mock order summary/confirmation only; no real payment gateway.
-8. Settings / Notification area — permission status/request and appropriate status UI.
+## Setup and development
 
-These are planned screens, not implemented screens.
+Use the SDK-matching Node/Expo versions; this repository currently uses Expo 57 and React Native 0.86. Install from each committed lockfile:
 
-## 6. Architecture
-Planned simple separation of concerns:
-
-```text
-Screens / UI
-    ↓
-Hooks / Context / State
-    ↓
-Services
-    ↓
-DummyJSON / Firebase / Gemini / Notification system / AsyncStorage
+```sh
+cd client
+npm ci
+npx expo start
 ```
 
-Use React Context API for shared state, separated by concern (not one large unrelated context). Planned folders: `components/`, `screens/`, `navigation/`, `contexts/`, `hooks/`, `services/`, `utils/`, `constants/`, `config/`, and `storage/`. Actual file paths may be refined to fit the existing project.
+In another terminal:
 
-## 7. Data Flow
-- **Catalog:** `ProductListScreen` → product state/service → DummyJSON → product list. Use API `limit` + `skip`; end when `skip + products.length >= total`.
-- **Cart:** Detail/list → Cart Context → AsyncStorage helper; cart totals/count are derived from items.
-- **Wishlist:** Product UI → wishlist state/service → Firestore; retrieve product details from DummyJSON using saved product IDs.
-- **Orders:** Cart → Checkout / Mock Payment → create order in Firestore (`userId`, `items`, `total`, `createdAt`, `status`) → status `CONFIRMED` → trigger order-confirmation notification → OrdersScreen reads the user's orders from Firestore.
-- **AI recommendation:** shopping need + relevant real catalog context → Gemini → validate/match IDs against DummyJSON → show only valid products.
+```sh
+cd server
+npm ci
+npm run dev
+```
 
-All flows above are planned, not verified.
+Provision local environment files yourself; **do not commit or share values**. Backend variable names are documented in `server/.env.example`: `GEMINI_API_KEY`, optional `GEMINI_MODEL`, `GEMINI_TIMEOUT_MS`, and `PORT`. Frontend uses `EXPO_PUBLIC_AI_API_URL`; this is a public base URL, never a secret API key. Existing Firebase configuration was left untouched during M8; a separate test project/emulator is needed for safe write tests.
 
-## 8. DummyJSON
-DummyJSON Products API is the planned source of truth for the product catalog. Read catalog/search/category/pagination data using the API's capabilities. Pagination uses `limit` + `skip`. Do not rely on DummyJSON add/update/delete endpoints as persistent business storage. Actual endpoint/config details and implementation are TBD.
+For Android Emulator, the host URL must be reachable from the emulator. Where local port forwarding is used:
 
-## 9. Firebase
-Planned Firestore responsibilities:
-- **Wishlist:** save, remove, and read. Minimum record fields: `userId`, `productId`, `savedAt`; product details remain in DummyJSON.
-- **Orders:** create mock orders and read the user's orders in OrdersScreen. Planned record fields: `userId`, `items`, `total`, `createdAt`, and `status`; minimum status is `CONFIRMED`.
+```sh
+adb reverse tcp:3001 tcp:3001
+```
 
-Show loading/error feedback. Authentication/identity, Firestore rules, configuration, and implementation remain TBD. No Firebase behavior is claimed as implemented.
+A frontend configured for `http://127.0.0.1:3001` requires that mapping; repeat it after emulator/ADB restart. A physical device requires its own reachable host configuration. Restart Metro after changing local public environment configuration.
 
-## 10. Gemini AI
-Planned AI feature: product recommendation based on a user-entered shopping need and relevant real catalog context. Validate/match returned product IDs against actual DummyJSON products; only valid matched products may be displayed. Gemini is not authoritative for product existence, ID, price, or stock. Invalid output/error fallback, model/config, and implementation remain TBD.
+## Verification
 
-## 11. Notification
-Planned business event: successful Firestore order creation with status `CONFIRMED`. Flow: Cart → Checkout / Mock Payment → create order in Firestore → `CONFIRMED` → trigger order-confirmation notification. OrdersScreen reads the user's orders from Firestore. Handle permission granted, denied, and not requested/unknown. Denial should not crash or block the order flow and should have clear UI status. Platform-specific setup and implementation are TBD.
+```sh
+# client
+npm test
+npm run lint
+node node_modules/typescript/bin/tsc --noEmit --allowJs --checkJs false --jsx react-native --skipLibCheck --target esnext --moduleResolution bundler --module esnext App.js
 
-## 12. Cart Persistence
-Planned AsyncStorage persistence via a small storage helper. Restore cart at startup and persist cart changes. Missing data, invalid JSON, and storage errors must not crash the app; in-memory cart should remain usable as much as possible. Implementation is not started.
+# server
+npm test
+# Opt-in: one Gemini request and read-only DummyJSON/Express checks
+node scripts/verify-integrations.mjs --live
+```
 
-## 13. Testing
-Planned test cases: `docs/Test_Matrix.xlsx`. Cases are not test results; update actual result/status/evidence only after executing each test.
+The JavaScript compile check is not strict type checking. The client test harness simulates hooks and mocks native/storage/Firebase APIs; it is not a device renderer. The opt-in live script reads existing configuration without printing secrets and records `docs/evidence/M8/live.json`; do not run it as an offline test.
 
-## 14. Debugging
-Evidence templates: `docs/Debug_Logs.md`. At least two real debug records with root cause and retest are required; current entries remain TBD.
+## M8 evidence and current limitations
 
-## 15. Release
-A release-like Android build must be created and run outside a development-only workflow (or provide lecturer-approved release evidence). Build steps/artifact/evidence remain TBD.
+Latest follow-up: 26/26 client headless tests and 12/12 server-reported tests Passed; lint and JavaScript compilation Passed. Catalog errors now expose Retry above the list while retaining loaded products; detail and wishlist failures have matching recovery actions. All 39 matrix rows were reviewed; totals remain 27 Passed (18 currently rerun, 9 historical), 11 Blocked and 1 Not Tested. TC02 remains Blocked because LDPlayer ADB became offline during the network-toggle attempt. Check/restore emulator Wi-Fi manually before resuming native tests. Original JSON/TXT/XML evidence reports below were deleted; surviving screenshots and Debug Logs support only the explicitly historical results. See the latest section of Debug Logs for exact scope and blockers.
 
-## 16. AI Usage
-Log actual assistance only in `docs/AI_Usage_Log.xlsx`. Do not record planned or fabricated AI usage. Verify/adapt/explain any AI output used.
+See [Debug Logs](docs/Debug_Logs.md), [Test Matrix](docs/Test_Matrix.xlsx), [RTM](docs/RTM.xlsx), [Design Decisions](docs/Design_Decision_Record.md), and [Integration Map](docs/Integration_Map.md).
 
-## 17. Installation and Running
-TBD until the existing app setup and actual run instructions are confirmed. Configuration instructions will be added without exposing real Firebase/Gemini secrets.
+M8 on 2026-10-17: 15 client tests and 12 server-reported tests passed; lint and JavaScript compilation passed; read-only catalog and live Gemini checks passed. Evidence distinguishes mocks, live HTTP and device execution. No device was attached initially; an emulator appeared later and read-only catalog/search/category/detail/reviews/shipping/FAB/AI-result and light/dark UI smoke checks passed (see `docs/evidence/M8/device.json`). Production Firebase mutations were prohibited. Native notification delivery, mutating cart/checkout acceptance, real restart persistence and isolated Firebase security/write tests remain Blocked pending a resettable test profile; manual steps are in Debug Logs. Thus M8 is **Partial**, not a blanket integration pass.
+
+Local notifications use a narrow adapter to avoid loading push-topic APIs unavailable in the tested Expo Go setup. Expo Go skips custom channel creation. Actual display, sound and timing depend on OS permissions/settings. The adapter uses package build subpaths and needs regression checking when upgrading Expo. Orders are local demo data, no real gateway is connected, AI prices/IDs come from DummyJSON, and model availability/quota can change.
+
+M9/release build/install evidence is **Not Tested** and intentionally not produced during M8. No publication, real purchase, email, Firebase production write, credential edit or `.env` modification was performed.

@@ -4,6 +4,25 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const CartContext = createContext();
 const CART_KEY = "@techstore_cart";
 
+const validProduct = (item) => item && Number.isInteger(item.id) && item.id > 0
+    && typeof item.title === 'string' && Number.isFinite(item.price) && item.price >= 0
+    && Number.isInteger(item.stock) && item.stock > 0
+    && (item.discountPercentage == null || (Number.isFinite(item.discountPercentage)
+        && item.discountPercentage >= 0 && item.discountPercentage <= 100));
+
+// Storage can contain old versions or partially corrupted records.
+const restoreItems = (items) => {
+    const restored = new Map();
+    for (const item of items) {
+        const quantity = Number(item?.quantity);
+        if (!validProduct(item) || !Number.isInteger(quantity) || quantity < 1) continue;
+        const previous = restored.get(item.id);
+        restored.set(item.id, { ...item, discountPercentage: item.discountPercentage ?? 0,
+            quantity: Math.min((previous?.quantity || 0) + quantity, item.stock) });
+    }
+    return [...restored.values()];
+};
+
 export const CartProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -16,7 +35,7 @@ export const CartProvider = ({ children }) => {
                 if (cartData !== null) {
                     const parsedCart = JSON.parse(cartData);
                     if(Array.isArray(parsedCart)) {
-                        setCartItems(parsedCart);
+                        setCartItems(restoreItems(parsedCart));
                     }
                 }
             } catch (error) {
@@ -44,7 +63,7 @@ export const CartProvider = ({ children }) => {
     //add to cart
     const addToCart = (product, quantity = 1) => {
         const amount = Number(quantity);
-        if (!product || product.id == null || product.stock <= 0
+        if (!validProduct(product)
             || !Number.isInteger(amount) || amount < 1) return;
 
         setCartItems((prev) => {
@@ -85,6 +104,10 @@ export const CartProvider = ({ children }) => {
     //update cart item
     const updateCartItem = (id, quantity) => {
         if (!Number.isInteger(quantity)) return;
+        if (quantity <= 0) {
+            setCartItems((prev) => prev.filter(item => item.id !== id));
+            return;
+        }
 
         setCartItems((prev) =>
             prev.map((item) =>

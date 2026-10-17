@@ -1,4 +1,19 @@
 # Design Decision Record
+
+## M8 implementation reconciliation — 2026-10-17
+
+The decisions below retain the original plan for traceability. This section supersedes planned implementation claims where they differ from the current code:
+
+- Context API and the existing React Navigation stack/tabs remain in use; no navigation framework migration was performed during hardening.
+- Firebase anonymous Authentication and Firestore wishlist are implemented. **Orders are local AsyncStorage records**, not Firestore records. Their `Paid` label represents mock checkout only. The assignment requires at least one Firebase business use case; wishlist is that use case. Cloud order sync remains unimplemented and is not claimed as tested.
+- Cart and theme preferences restore from AsyncStorage. M8 sanitizes malformed cart records before deriving totals. Orders serialize local saves to prevent overlapping writes from losing records.
+- Gemini runs on the Express backend, receives DummyJSON catalog context, and returns mapped product arrays. Configuration is checked before network access; a deadline bounds catalog plus Gemini. Invalid/unknown/sold-out/duplicate IDs are excluded, and malformed responses yield controlled errors.
+- Local notification scheduling follows successful local mock-order persistence. The request is one-shot after one second; actual timing is OS-controlled. Expo Go uses its default channel to preserve the working compatibility fix. Notification denial/failure does not undo a saved order and is explained to the user.
+- `localNotifications.js` imports build subpaths as an Expo Go compatibility workaround. This is a version-coupling trade-off requiring retest on SDK/package upgrades; it is not a remote push integration.
+- Current verification: automated headless/mocked and read-only live HTTP checks are Passed as individually listed in Test Matrix. An emulator became available late; read-only UI smoke checks were executed and recorded in evidence/M8/device.json. Isolated Firebase, mutating checkout/native notification and true restart acceptance remain Blocked. M9 is Not Tested.
+
+Evidence: `Debug_Logs.md`, `Test_Matrix.xlsx`, and `evidence/M8/`. See the updated Integration Map and README for the current data flow. The historical plan below must not be presented as implementation evidence.
+
 Status: These are the selected design decisions for the planned TechStore application. They document intended design, not implementation or test evidence. Update locations and implementation status as work proceeds.
 
 ## Decision 1 — State management

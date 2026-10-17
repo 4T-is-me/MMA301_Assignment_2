@@ -26,7 +26,7 @@ export default function OrderCard({ item }) {
 
             {item.items.map(product => (
                 <View key={product.id} style={styles.productRow}>
-                    <CartCheckout item={product} index={0} imageUri={product.thumbnail || product.image} finalPrice={product.price} />
+                    <CartCheckout item={product} index={0} imageUri={product.thumbnail || product.image} finalPrice={product.price * (1 - (product.discountPercentage || 0) / 100)} />
                 </View>
             ))}
 
