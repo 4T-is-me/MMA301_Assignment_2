@@ -18,7 +18,7 @@ export const AIRecommendationService = {
             if (!error.response && !isCancel(error)) {
                 throw new Error(error.code === 'ECONNABORTED'
                     ? 'AI request timed out. Please try again.'
-                    : 'Cannot connect to the AI server. Check that the server and Android port forwarding are running.');
+                    : 'Cannot connect to the AI server. Check that the backend is running and reachable from this device.');
             }
             throw error;
         }

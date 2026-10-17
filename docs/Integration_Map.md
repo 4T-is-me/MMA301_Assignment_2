@@ -2,6 +2,10 @@
 
 This describes the current code. Passed evidence is scoped to the test layer; do not interpret mocked or live HTTP checks as device verification.
 
+Latest M9 continuation: direct Windows Gradle is selected. `build-android-release.cjs` → Expo prebuild/config plugins → generated `android/` → dedicated release signing from user Gradle properties → `assembleRelease`. Gradle 9.3.1/JDK 21 and NDK installation ran; signing setup is the first observed blocker. LDPlayer can reach the LAN health endpoint via a read-only guest command, but no APK/Gemini/Firebase/notification acceptance has run. TC15 remains Blocked; EAS login is not required for this selected path.
+
+M9 update (2026-10-17): EAS preview APK configuration now exists, with a private-LAN backend URL supplied at build time and server Gemini secrets excluded. EAS authentication is missing; no signed artifact/build URL or APK install/runtime evidence exists. TC15 is Blocked. M8 user manual passes for Retry, simulated empty state, repeated add, Wishlist restart and notification display remain scoped to that earlier app; the historical M8 table below is not release certification. See the latest Debug Logs/RTM/Test Matrix for current status.
+
 ```text
 ProductList / ProductDetail -> productService -> DummyJSON (read only)
 Product UI -> CartContext -> AsyncStorage @techstore_cart

@@ -2,6 +2,106 @@
 
 M8 integration hardening — 2026-10-17 (Asia/Saigon).
 
+## M9 signing resumption — 2026-10-17
+
+The user created `C:/Users/ADMIN/.techstore/techstore-release.jks` and configured all four user Gradle signing properties. The key file and all four fields were confirmed present without printing passwords. The assistant did not create or replace the keystore.
+
+### Debug Log 10 — Windows keystore path is escaped by Java properties
+
+- **Reproduction:** Run the local release wrapper with the newly configured signing properties. The first resumed attempt failed `:app:validateTechstoreSigning` after 38 seconds because the Java-resolved path was not a file.
+- **Root cause:** Single Windows backslashes in `TECHSTORE_RELEASE_STORE_FILE` are escape characters in Java properties. Reading the file with Java resolved the value as `C:UsersADMIN.techstore...`, although the intended key existed at the user's supplied absolute path. Checking only the raw text/path with Python did not reproduce Java's parsing semantics.
+- **Fix:** Normalize only the non-secret store-file property to `C:/Users/ADMIN/.techstore/techstore-release.jks`. Password/alias lines were preserved byte-for-byte; a before/after integrity check confirmed the keystore itself was unchanged.
+- **Retest so far:** The next real Gradle attempt passed `validateTechstoreSigning` and began native CMake compilation. This closes the path issue, not final signing or APK acceptance.
+
+### Credential verification boundary
+
+A separate Java check attempted to load the configured keystore and key using the same user properties, without printing their values. It reported `Keystore was tampered with, or password was incorrect`. No password guesses, substitutions or key regeneration were attempted. The user was asked to verify the store password at an interactive `keytool -list` prompt and correct local Gradle properties themselves, without sending credentials to chat. Final signing and APK acceptance remain unverified until that mismatch is resolved and the complete build succeeds. The native build attempt continues independently to expose compilation issues; its eventual result must be recorded before claiming an artifact.
+
+**Subsequent user correction:** The user confirmed verifying/correcting the passwords locally. Repeating the Java check successfully loaded the store and recovered the configured private key. The public certificate SHA-256 is `3ea9ad0333fcff9a20cb6be93904a074a2681f719a3eee8a4080d8ec15fb4c96`; it must match the signed APK before installation. No password/private key was printed or exported. The already-running Gradle process had loaded its configuration before that correction; a fresh invocation may be needed for final signing. Credential setup is no longer treated as unconfirmed.
+
+## M9 continuation — direct Windows Gradle release (2026-10-17)
+
+Historical initial local attempt: the missing-properties state below was superseded by the user's signing setup and the signing-resumption section above. EAS login is still not needed for direct Gradle.
+
+**Current route:** Expo prebuild → local Gradle signing → `assembleRelease` → APK verification/install. This is the lecturer's sequence as described by the user; Slot 10 itself was not supplied as a file. It does not require EAS login and supersedes the earlier EAS-only blocker as the selected build path. **Status: Partial; first observed build blocker is missing user-controlled release signing. No installable release APK exists yet.** Later native compilation/linking/runtime outcomes cannot be inferred from successful configuration.
+
+### Toolchain and prebuild evidence
+
+- Java/keytool: Eclipse Adoptium **JDK 21.0.6** on Windows 11.
+- Android SDK found at the user's local Android SDK directory. Platforms 35/36/36.1 and build-tools including **36.0.0** are installed. `ANDROID_HOME` was initially absent; commands/wrapper provide the detected SDK path to child processes without editing `.env` or system settings.
+- No `android/` existed before this continuation. Expo prebuild generated the ignored project; npm installation was disabled. Original development scripts were restored/preserved; package dependency versions and lockfile remain unchanged. The build uses generated files; modifications are defined by Expo config plugins, not manual edits to generated Gradle files.
+- SDK 57 prebuild **recreates native folders by default**, even without an explicit clean flag. One repeat recreated only the newly generated native directory from this session, which held no user release key/data. Future runs use `--no-clean`; `node scripts/build-android-release.cjs --prebuild-only` subsequently succeeded with “reusing /android”. The wrapper preserves original Expo Go scripts and checks the lockfile. Keep release keys outside generated folders.
+- Generated wrapper downloaded/ran **Gradle 9.3.1** successfully with Java 21; no global Gradle installation or EAS login was required. Native configuration printed build-tools/compile/target SDK **36**, min SDK **24**, Kotlin **2.1.20** and NDK **27.1.12297006**.
+- NDK was initially missing. Gradle installed **27.1.12297006**, using the already accepted Android SDK license. It compiled the React Native/Expo Gradle plugins, configured/autolinked Expo native modules including notifications, and generated codegen/autolinking tasks.
+- Prebuild warning about optional `expo-system-ui`, SDK XML schema warning and future Gradle-10 deprecations were observed; they did not cause this attempt to stop. No dependency/SDK upgrade or warning suppression was applied. The earlier Expo Doctor patch mismatch remains recorded, not magically resolved.
+
+### Debug Log 09 — Generated template would sign release with the debug key
+
+- **Observed cause:** Generated `android/app/build.gradle` assigned `signingConfigs.debug` to the release build type. The template includes a known `debug.keystore`; producing that APK would not satisfy the requested personal release-key workflow.
+- **Correction:** `withLocalReleaseSigning` appends a reproducible Gradle release signing configuration only when `TECHSTORE_LOCAL_RELEASE=1`. It reads `TECHSTORE_RELEASE_STORE_FILE`, `TECHSTORE_RELEASE_STORE_PASSWORD`, `TECHSTORE_RELEASE_KEY_ALIAS`, `TECHSTORE_RELEASE_KEY_PASSWORD` from user Gradle properties/environment, sets release signing to the dedicated config (or null when absent), and validates before release pre-build. It rejects the known template filename/alias and never silently falls back to the debug signer. EAS mode without the local flag keeps its own signing workflow.
+- **Actual attempt:** `gradlew.bat :app:assembleRelease --console=plain --no-daemon --max-workers=2` exited **1**, **BUILD FAILED in 5m**, **39 actionable tasks executed**. The failing task was `:app:validateTechstoreSigning`, message: `TechStore release signing is missing. Configure the four TECHSTORE_RELEASE_* user Gradle properties; never put passwords in the repository.` This verifies the missing-key guard on real Gradle, not successful APK compilation.
+- **User handoff:** The user chose “create a new key following README; I will configure it”. That choice is not confirmation setup is finished. No key/password was generated by the assistant. User creates/reuses the key outside the repository and configures the four fields in their user-only Gradle properties file; only readiness needs to be reported, never passwords/key contents. Do not rerun as if credentials exist until confirmed or detected.
+
+### Current checks and acceptance boundary
+
+- Client **30/30** headless/configuration tests Passed (exit 0), including local release endpoint validation without EAS and separation of local/cloud signing plugins.
+- Lint and JavaScript compilation Passed (exit 0); compilation is not strict typing or native build verification.
+- Safe native prebuild wrapper `--prebuild-only` Passed (exit 0); generation reused the existing directory and original development scripts were preserved.
+- Generated main Android manifest contains the configured LAN cleartext flag; the notifications library declares `POST_NOTIFICATIONS`. This is static configuration evidence, not permission/delivery acceptance.
+- A read-only `wget` probe **from LDPlayer** to `http://192.168.2.10:3001/api/health` exited **0** and returned the expected API-running health marker. This proves that guest command can reach the LAN backend; it does **not** test APK network policy, the app's AI request, Gemini output or Firebase.
+- No signed APK was produced/verified/installed/launched. All 12 release acceptance flows, including Gemini, Firebase, notifications, full persistence and offline Retry, remain Blocked at APK level. Earlier Expo Go/user manual and mock results remain separate.
+
+**TC15 remains Blocked; matrix totals remain 32 Passed, 0 Failed, 7 Blocked, 0 Not Tested.** The native command's failed signing prerequisite is recorded explicitly; it is not a fabricated runtime failure or Passed release test. No Firebase/order data or device network settings were changed during this continuation.
+
+### Direct Gradle versus EAS
+
+Direct Gradle is now the selected path: no Expo account, local JDK/SDK/NDK and user-managed signing required; this computer reached the signing guard successfully. EAS cloud remains an alternative requiring login/project/signing setup but supplies hosted native build infrastructure. The unsupported Windows limitation applies to **`eas build --local`**, not to generated `gradlew.bat`. No switch back to EAS, credential creation, commit or push was performed. Once signing is ready, rerun `node scripts/build-android-release.cjs`; only after successful signing and `apksigner`/package inspection should the APK be installed and TC15 acceptance run. The expected APK path is documented in README; it is not claimed as an existing artifact.
+
+## M9 release candidate preflight — 2026-10-17 (Asia/Saigon)
+
+This earlier EAS-only preflight is retained for history. The newer direct-Gradle continuation above supersedes its selected build route and initial missing-NDK state; it does not supersede the unresolved release acceptance tests.
+
+**Status: Partial; signed APK build and all APK acceptance tests Blocked.** The starting Git tree was clean at `b2f4f89` (`milestone 8 complete integration testing and bug fixes`). Earlier M8 manual/mock evidence is preserved below; a commit title does not supersede the documented M8 acceptance limits. No reset, stash, commit or push was performed.
+
+### Release blockers found and configuration changes
+
+1. **Physical-device AI endpoint:** Existing `client/.env` points to public base URL `http://127.0.0.1:3001`; on a phone this addresses the phone itself. Do not modify that environment file. The new `preview` EAS profile supplies `http://192.168.2.10:3001` (the observed computer LAN IPv4) and disables local dotenv loading. The release config rejects missing URLs, loopback/emulator aliases, credentials/query/path-bearing base URLs and public HTTP. A config plugin sets native Android cleartext permission for private-LAN HTTP, or disables it for HTTPS. This is a trusted-LAN demonstration configuration, not an online deployment. The existing AI connection error now describes device/backend reachability rather than emulator-only forwarding.
+2. **Missing release identity/profile:** `app.json` had name `client`, no Android application ID/versionCode, and there was no `eas.json`. Set the visible name to `TechStore`, package to `com.techstore.mma301`, versionCode to `1`; retain version `1.0.0`, slug, all existing assets and architecture. The `preview` profile requests an installable APK, internal distribution and `developmentClient: false`. The existing launcher image is Expo template artwork; no new icon was invented. PNG headers/dimensions and icon artwork were inspected. No generated native directories are maintained manually.
+3. **EAS authentication/signing blocker:** EAS CLI **25.1.1** `whoami` exited 1 with **Not logged in**. Per the user's instruction, stop before submitting a cloud build or creating signing credentials. No remote Expo project was created/linked and no keystore was generated, uploaded, replaced or removed. Remote signing state cannot be inspected without login. There is no APK file, build ID or artifact URL to report. This is a preflight blocker, not a failed native compilation. Java 21 and Android SDK platforms 35/36/36.1 are installed, but EAS local builds on Windows are not officially supported; switching to an unsigned/debug APK would not satisfy the requested signed release candidate or the user's signing constraint.
+4. **SDK compatibility diagnostic:** `expo install --check` and Expo Doctor identify only the Expo patch mismatch: installed **57.0.27**, expected **~57.0.30**. Doctor reports **20/21 checks Passed, 1 Failed**, exit 1. Do not suppress the check or claim a full dependency pass. No SDK/dependency/lockfile upgrade was performed; whether the patch mismatch causes a native build failure is unverified. Review the minimal patch update before the actual build.
+
+Repository/upload exclusions were expanded for environment variants, credentials/keystores, build artifacts and caches. `.easignore` retains the client Git exclusions and excludes backend/docs/test data from build inputs; `.env` files are not build inputs. Git ignore rules were checked with representative paths; no tracked `.env`, signing or credentials files were found. No EAS archive was uploaded; its final contents still need inspection before cloud submission. Existing M1–M8 documents/evidence were not deleted.
+
+### Checks actually executed in M9
+
+| Check | Actual result | Scope / limitation |
+|---|---|---|
+| Client `npm test` | **29/29 Passed**, exit 0 | Previous 27 headless/mock tests plus 2 release-URL configuration tests; no native renderer or production Firebase/order mutation. |
+| Server `npm test` | **12/12 reported Passed**, exit 0 | 11 child checks plus parent, mocked external HTTP. No new Gemini request. |
+| Client ESLint `--no-cache` | **Passed**, exit 0 | Includes app config, plugin and tests. |
+| README JavaScript compile check | **Passed**, exit 0 | `--allowJs --checkJs false`; not strict typing or native compilation. |
+| Expo preview config/manifest introspection | **Passed**, exit 0 | Name/package/version/versionCode resolve as configured; `android:usesCleartextTraffic=true` for this LAN profile. Native library manifest merging/runtime delivery not proven. |
+| Android production Hermes export | **Passed**, exit 0 | 1,037 modules; ignored `client/.expo/m9-export`; a JS/asset intermediate, **not an APK**. |
+| Export checks | **Passed** | Configured LAN base URL present; server Gemini key absent from the inspected HBC bundle (boolean-only check; secret never printed). This does not constitute a completed APK/archive audit. |
+| Backend GET health | **HTTP 200** via `127.0.0.1:3001` and `192.168.2.10:3001` | Tested from this computer only, not from a physical phone; no Gemini or data mutation. |
+| SDK compatibility / Expo Doctor | **Failed diagnostic**: 20/21 checks Passed | Only identified mismatch is Expo patch 57.0.27 vs ~57.0.30; dependencies unchanged. |
+| ADB availability | LDPlayer `emulator-5554 device` | Device is available, but no signed TechStore APK exists to install. No APK/device result is inferred from Expo Go. |
+| Signed build, install, cold start | **Blocked** | EAS login/project/signing require the user; cloud build not submitted. |
+
+The Firebase module still initializes anonymous Auth with React Native AsyncStorage persistence and user-scoped Firestore wishlist. Its existing web client configuration is unchanged; no service-account/private-key markers were found. Public Firebase client configuration is bundled by design, not proof of release Auth/rules correctness. **Actual release Anonymous Auth, Firestore write/read/security behavior and notification custom-channel behavior remain Blocked.** Earlier Expo Go/manual notification and Wishlist persistence results are not APK evidence.
+
+### APK acceptance disposition
+
+All 12 requested release flows are **Blocked because no signed artifact is available**: (1) startup/no crash, (2) DummyJSON catalog, (3) search/category/pagination/refresh, (4) detail/images/price/reviews, (5) cart/add/update/remove, (6) Firebase Auth/Wishlist, (7) local mock checkout/history, (8) persistence after full close/reopen, (9) native notification after checkout, (10) live backend/Gemini UI, (11) light/dark theme, (12) offline/API failures/Retry. None was run on an APK. TC15 changes from **Not Tested** (M9 previously excluded) to **Blocked** (M9 now started but missing authentication/signing/artifact). All other matrix statuses retain their existing M8 evidence.
+
+**Current 39-case matrix: 32 Passed, 0 Failed, 7 Blocked, 0 Not Tested.** The separate Expo Doctor diagnostic failure is not a fabricated failure of an existing application test case; it is recorded above and must be resolved/reviewed before release. No native test was promoted. M8 blockers TC04/07/09/10/11/14 remain; TC15 is the additional M9 blocker.
+
+### Required user actions / handoff
+
+Follow README's `client/` commands: EAS login → link/create the intended project → configure/reuse Android signing explicitly → review Expo patch compatibility → verify the LAN health URL on the phone → build `preview` with `--freeze-credentials`. If a dynamic-config project-ID change is requested, add only the supplied ID under `app.json` `expo.extra.eas.projectId`; do not replace app configuration. Preserve existing signing keys; do not accept an automatic commit or a paid-plan change. No paid backend deployment was attempted or approved.
+
+After build success, record the actual APK/build URL, build ID, version, source snapshot, signing certificate fingerprint and SHA-256; install TechStore separately from Expo Go and verify cold start without Metro. Use safe test Firebase/profile data for writes. Capture only necessary PNGs and actual results. No artifact URL/filename/hash is invented. `.env` integrity is checked against the preflight baseline without publishing its values. Until the APK and acceptance evidence exist, **M9 is not complete and the project is not ready for final submission or a completed-M9 commit**.
+
 ## Cart quantity behavior update (2026-10-17)
 
 At the user's request, decreasing a cart item's quantity from 1 to 0 now removes that item. CartItem's minus action remains enabled at quantity 1, and CartContext removes the matching item for nonpositive integer updates. Other items and stock caps are retained; derived counts/totals and the normal AsyncStorage save follow the updated cart.

@@ -32,6 +32,14 @@ yarn-error.*
 
 # local env files
 .env
+.env.*
+!.env.example
+credentials.json
+*.keystore
+*.apk
+*.aab
+/artifacts/
+/coverage/
 
 # typescript
 *.tsbuildinfo

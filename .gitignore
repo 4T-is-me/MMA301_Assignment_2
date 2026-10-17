@@ -1,0 +1,26 @@
+# Local configuration and credentials (keep safe examples tracked)
+.env
+.env.*
+!.env.example
+credentials.json
+*.jks
+*.keystore
+*.p12
+*.p8
+*.pem
+*.key
+*-service-account*.json
+
+# Dependencies, generated builds and caches
+node_modules/
+.expo/
+.gradle/
+.kotlin/
+coverage/
+artifacts/
+*.apk
+*.aab
+*.tsbuildinfo
+*.log
+~$*.xlsx
+.DS_Store

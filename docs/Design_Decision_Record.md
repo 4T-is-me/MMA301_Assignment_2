@@ -1,5 +1,15 @@
 # Design Decision Record
 
+## M9 continuation — direct Gradle on Windows
+
+At the user's explicit request, prefer Expo prebuild plus generated Gradle wrapper to follow the lecturer's release-key/signing/assembleRelease/install sequence without EAS login. Keep `android/` generated/ignored; preserve native changes through config plugins. Use `--no-clean --no-install` on repeat prebuild and preserve development scripts/dependency versions. Local signing is enabled only with `TECHSTORE_LOCAL_RELEASE=1`, consumes external user Gradle properties and blocks release when the key is absent instead of falling back to the template debug key. The local wrapper reuses the release endpoint validation and LAN profile. Real Gradle 9.3.1/JDK 21 configuration and NDK installation succeeded; the actual assemble attempt stopped at missing signing. No signed APK/runtime certification is claimed. EAS remains an alternative; its Windows local-run limitation is not a limitation of direct Gradle.
+
+## M9 release candidate preparation — 2026-10-17
+
+Retain Expo 57.0.27, the existing React Navigation/Context/service architecture and Firebase configuration. Use EAS cloud's `preview` profile to produce an internally distributed APK with application ID `com.techstore.mma301`, visible name TechStore and version 1.0.0 (1). No EAS project/signing credentials were created: authentication returned Not logged in, so native build/install remain Blocked. The current SDK compatibility diagnostic recommends Expo ~57.0.30; no upgrade was made and the diagnostic is not marked Passed.
+
+Keep Gemini credentials server-only. Override the emulator-only development URL in the build profile with the observed private-LAN backend URL; keep `.env` unchanged. Validate the endpoint during release config evaluation and use a small config plugin for Android HTTP LAN access. HTTPS endpoints disable cleartext; an online HTTPS deployment needs a separate hosting/cost decision. The LAN address is environment-specific and requires phone reachability verification/rebuild after changes. Do not treat JS export, mocked tests, prior Expo Go checks or M8 manual reports as standalone APK evidence. See the M9 section of Debug Logs and TC15 for actual checks and blockers.
+
 ## M8 implementation reconciliation — 2026-10-17
 
 The decisions below retain the original plan for traceability. This section supersedes planned implementation claims where they differ from the current code:
