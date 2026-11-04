@@ -16,7 +16,7 @@ Expo React Native / JavaScript shopping app with DummyJSON, Context state, Async
 
 ## Setup and development
 
-This project uses Expo **57.0.27**, React Native **0.86.3**, React **19.2.3** and Firebase **13.x**. M9 checks used Node **24.12.0** and EAS CLI **25.1.1**. Expo's compatibility check currently recommends the newer Expo patch `~57.0.30`; dependencies were deliberately not upgraded during release preparation. Install from each committed lockfile:
+This project uses Expo **58.0.19**, React Native **0.88.0**, React **19.3.0** and Firebase **13.x**. Use Expo Go for SDK 58. M9 checks used Node **24.12.0** and EAS CLI **25.1.1**; those release checks predate the SDK 58 upgrade. Install from each committed lockfile:
 
 ```sh
 cd client

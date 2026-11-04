@@ -1,3 +1,9 @@
+/**
+ * Account: trangtttce191027
+ * Author: Tô Thị Thảo Trang (CE191027)
+ * Issue / UC: UC01 / UC02 - Reusable Product Card Component
+ * Purpose: Thành phần giao diện thẻ sản phẩm hiển thị hình ảnh, giá gốc, giá giảm, đánh giá sao, nút thêm vào giỏ và nút yêu thích.
+ */
 import React, { useState } from 'react';
 import { Image, Pressable, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

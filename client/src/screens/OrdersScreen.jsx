@@ -1,3 +1,9 @@
+/**
+ * Account: trangtttce191027
+ * Author: Tô Thị Thảo Trang (CE191027)
+ * Issue / UC: UC04 - Order History Screen
+ * Purpose: Màn hình hiển thị danh sách đơn hàng đã đặt trong quá khứ kèm chi tiết sản phẩm, ngày đặt và tổng tiền.
+ */
 
 import React from 'react';
 import { View, Text, FlatList } from 'react-native';

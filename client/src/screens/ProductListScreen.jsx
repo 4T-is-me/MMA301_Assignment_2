@@ -1,3 +1,9 @@
+/**
+ * Account: trangtttce191027
+ * Author: Tô Thị Thảo Trang (CE191027)
+ * Issue / UC: UC01 - Product Catalog & Infinite Pagination
+ * Purpose: Màn hình danh sách sản phẩm, tích hợp DummyJSON API với phân trang FlatList (limit/skip), lọc danh mục, tìm kiếm và kéo để làm mới (pull-to-refresh).
+ */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, FlatList, Image, Pressable, RefreshControl, ScrollView, TextInput, View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

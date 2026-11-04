@@ -1,3 +1,9 @@
+/**
+ * Account: trangtttce191027
+ * Author: Tô Thị Thảo Trang (CE191027)
+ * Issue / UC: UC06 - Gemini AI Integration Service (Backend Proxy)
+ * Purpose: Nhúng danh mục Catalog thực tế vào Prompt của Google Gemini AI, ép định dạng JSON chuẩn và validate sản phẩm tồn tại.
+ */
 
 import { GoogleGenAI } from '@google/genai';
 import { getAllProducts } from './productService.js';

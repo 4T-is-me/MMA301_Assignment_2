@@ -1,3 +1,9 @@
+/**
+ * Account: trangtttce191027
+ * Author: Tô Thị Thảo Trang (CE191027)
+ * Issue / UC: UC03 - Wishlist State Management
+ * Purpose: Quản lý trạng thái danh sách yêu thích toàn cục, đồng bộ hai chiều với Firebase Firestore.
+ */
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useAuth } from './AuthContext';
 import { WishlistService } from '../services/wishlistService';

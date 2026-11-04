@@ -1,3 +1,9 @@
+/**
+ * Account: trangtttce191027
+ * Author: Tô Thị Thảo Trang (CE191027)
+ * Issue / UC: UC06 - AI Recommendation Controller
+ * Purpose: Controller tiếp nhận request từ client, kiểm tra độ dài prompt, gọi Gemini service và trả về mã lỗi HTTP có kiểm soát.
+ */
 
 import { getAIRecommendation } from '../services/geminiService.js';
 

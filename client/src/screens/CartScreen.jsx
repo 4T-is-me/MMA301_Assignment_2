@@ -1,3 +1,9 @@
+/**
+ * Account: trangtttce191027
+ * Author: Tô Thị Thảo Trang (CE191027)
+ * Issue / UC: UC02 - Cart Screen
+ * Purpose: Màn hình giỏ hàng hiển thị danh sách sản phẩm đã chọn, tăng giảm số lượng, xóa khi về 0 và điều hướng đến thanh toán.
+ */
 import React, { useLayoutEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { styles } from '../styles/CartStyles';

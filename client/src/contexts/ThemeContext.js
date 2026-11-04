@@ -1,3 +1,9 @@
+/**
+ * Account: trangtttce191027
+ * Author: Tô Thị Thảo Trang (CE191027)
+ * Issue / UC: UC01 - Theme State Management & Persistence
+ * Purpose: Quản lý chủ đề giao diện sáng/tối (Light/Dark Theme), lưu và khôi phục tùy chọn người dùng từ AsyncStorage (@app_theme).
+ */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { DefaultTheme, DarkTheme } from '@react-navigation/native';
