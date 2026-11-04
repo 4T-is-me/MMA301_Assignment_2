@@ -1,3 +1,9 @@
+/**
+ * Account: trangtttce191027
+ * Author: Tô Thị Thảo Trang (CE191027)
+ * Issue / UC: UC05 - Local Notifications Service
+ * Purpose: Dịch vụ quản lý quyền thông báo hệ thống và lên lịch gửi thông báo đẩy cục bộ sau khi thanh toán thành công.
+ */
 import { Platform } from 'react-native';
 import { isRunningInExpoGo } from 'expo';
 import * as Notifications from './localNotifications';

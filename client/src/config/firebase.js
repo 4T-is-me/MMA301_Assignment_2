@@ -1,3 +1,9 @@
+/**
+ * Account: trangtttce191027
+ * Author: Tô Thị Thảo Trang (CE191027)
+ * Issue / UC: UC03 - Firebase Configuration & Initialization
+ * Purpose: Cấu hình và khởi tạo kết nối Firebase App, Firebase Auth và Cloud Firestore database.
+ */
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
 import AsyncStorage from '@react-native-async-storage/async-storage';

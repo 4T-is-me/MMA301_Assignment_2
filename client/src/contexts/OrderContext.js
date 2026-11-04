@@ -1,3 +1,9 @@
+/**
+ * Account: trangtttce191027
+ * Author: Tô Thị Thảo Trang (CE191027)
+ * Issue / UC: UC04 - Orders State Management & Storage Persistence
+ * Purpose: Quản lý danh sách lịch sử đơn hàng, đồng bộ hóa tuần tự (serialized saves) với AsyncStorage (@techstore_order).
+ */
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 

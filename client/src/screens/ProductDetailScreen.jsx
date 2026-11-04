@@ -1,3 +1,9 @@
+/**
+ * Account: trangtttce191027
+ * Author: Tô Thị Thảo Trang (CE191027)
+ * Issue / UC: UC02 - Product Detail Screen
+ * Purpose: Màn hình chi tiết sản phẩm, trình chiếu slider ảnh, tab thông số/đánh giá, chọn số lượng và thêm vào giỏ hàng.
+ */
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, ActivityIndicator, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { styles } from '../styles/ProductDetailStyles';

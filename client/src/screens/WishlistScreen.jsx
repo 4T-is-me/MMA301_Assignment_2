@@ -1,3 +1,9 @@
+/**
+ * Account: trangtttce191027
+ * Author: Tô Thị Thảo Trang (CE191027)
+ * Issue / UC: UC03 - Wishlist Screen
+ * Purpose: Màn hình hiển thị các sản phẩm yêu thích từ Firebase Cloud Firestore, hỗ trợ xóa và xem chi tiết sản phẩm.
+ */
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, Button } from 'react-native';
 import { styles } from '../styles/WishlistStyles';
