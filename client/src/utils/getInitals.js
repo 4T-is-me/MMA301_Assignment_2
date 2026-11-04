@@ -1,3 +1,6 @@
+/**
+ * Author: trangtttce191027
+ */
 const GetInitials = (name) => {
     if (!name) return "U";
     const words = name.trim().split(" ");

@@ -1,6 +1,6 @@
 /**
  * Account: trangtttce191027
- * Author: Tô Thị Thảo Trang (CE191027)
+ * Author: trangtttce191027
  * Issue / UC: UC04 / UC05 - Mock Checkout & Local Notification Workflow
  * Purpose: Màn hình thanh toán mô phỏng, lưu đơn hàng snapshot vào AsyncStorage, làm sạch giỏ hàng và kích hoạt thông báo cục bộ.
  */

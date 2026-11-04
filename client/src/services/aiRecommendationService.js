@@ -1,6 +1,6 @@
 /**
  * Account: trangtttce191027
- * Author: Tô Thị Thảo Trang (CE191027)
+ * Author: trangtttce191027
  * Issue / UC: UC06 - AI Recommendation API Client Service
  * Purpose: Dịch vụ gửi truy vấn prompt từ ứng dụng React Native lên Backend Express trung gian.
  */

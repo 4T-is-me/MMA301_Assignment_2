@@ -1,3 +1,6 @@
+/**
+ * Author: trangtttce191027
+ */
 export { setNotificationHandler } from 'expo-notifications/build/NotificationsHandler';
 export {
     addNotificationReceivedListener,

@@ -1,3 +1,6 @@
+/**
+ * Author: trangtttce191027
+ */
 const { AndroidConfig, withAndroidManifest } = require('expo/config-plugins');
 
 // LAN demonstration builds use HTTP; HTTPS builds explicitly disable cleartext.

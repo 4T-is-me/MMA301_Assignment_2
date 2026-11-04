@@ -1,3 +1,6 @@
+/**
+ * Author: trangtttce191027
+ */
 export const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', {
         style: 'currency',

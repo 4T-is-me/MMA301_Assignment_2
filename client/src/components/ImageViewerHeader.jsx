@@ -1,3 +1,6 @@
+/**
+ * Author: trangtttce191027
+ */
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';

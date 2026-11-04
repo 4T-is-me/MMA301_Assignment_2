@@ -1,3 +1,6 @@
+/**
+ * Author: trangtttce191027
+ */
 /* global __dirname */
 const fs = require('node:fs');
 const path = require('node:path');

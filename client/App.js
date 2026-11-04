@@ -1,3 +1,6 @@
+/**
+ * Author: trangtttce191027
+ */
 import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import Toast from 'react-native-toast-message';

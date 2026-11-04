@@ -1,3 +1,6 @@
+/**
+ * Author: trangtttce191027
+ */
 export default function ratingStars(rating = 0) {
     // Giới hạn điểm trong khoảng 0–5, kể cả khi dữ liệu bị thiếu.
     const score = Number.isFinite(rating) ? Math.max(0, Math.min(5, rating)) : 0;

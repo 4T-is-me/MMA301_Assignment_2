@@ -1,6 +1,6 @@
 /**
  * Account: trangtttce191027
- * Author: Tô Thị Thảo Trang (CE191027)
+ * Author: trangtttce191027
  * Issue / UC: UC02 - Cart State Management & Storage Persistence
  * Purpose: Quản lý trạng thái giỏ hàng toàn cục, tính toán Derived Totals (totalPrice, itemCount), giới hạn tồn kho (stock) và lưu AsyncStorage.
  */

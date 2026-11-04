@@ -1,6 +1,6 @@
 /**
  * Account: trangtttce191027
- * Author: Tô Thị Thảo Trang (CE191027)
+ * Author: trangtttce191027
  * Issue / UC: UC03 - Firebase Configuration & Initialization
  * Purpose: Cấu hình và khởi tạo kết nối Firebase App, Firebase Auth và Cloud Firestore database.
  */
