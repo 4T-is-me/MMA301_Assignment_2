@@ -1,6 +1,6 @@
 /**
  * Account: trangtttce191027
- * Author: Tô Thị Thảo Trang (CE191027)
+ * Author: trangtttce191027
  * Issue / UC: UC03 - Firebase Anonymous Authentication Context
  * Purpose: Quản lý phiên xác thực người dùng nặc danh (Anonymous Auth) với Firebase, lưu trạng thái phiên vào AsyncStorage.
  */

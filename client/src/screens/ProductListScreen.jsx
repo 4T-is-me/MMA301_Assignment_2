@@ -1,6 +1,6 @@
 /**
  * Account: trangtttce191027
- * Author: Tô Thị Thảo Trang (CE191027)
+ * Author: trangtttce191027
  * Issue / UC: UC01 - Product Catalog & Infinite Pagination
  * Purpose: Màn hình danh sách sản phẩm, tích hợp DummyJSON API với phân trang FlatList (limit/skip), lọc danh mục, tìm kiếm và kéo để làm mới (pull-to-refresh).
  */

@@ -1,6 +1,6 @@
 /**
  * Account: trangtttce191027
- * Author: Tô Thị Thảo Trang (CE191027)
+ * Author: trangtttce191027
  * Issue / UC: UC02 - Cart Screen
  * Purpose: Màn hình giỏ hàng hiển thị danh sách sản phẩm đã chọn, tăng giảm số lượng, xóa khi về 0 và điều hướng đến thanh toán.
  */

@@ -1,3 +1,6 @@
+/**
+ * Author: trangtttce191027
+ */
 // Both native release paths use the same endpoint checks; Expo Go keeps its local config.
 module.exports = ({ config }) => {
     const localRelease = process.env.TECHSTORE_LOCAL_RELEASE === '1';

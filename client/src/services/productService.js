@@ -1,6 +1,6 @@
 /**
  * Account: trangtttce191027
- * Author: Tô Thị Thảo Trang (CE191027)
+ * Author: trangtttce191027
  * Issue / UC: UC01 / UC02 - Remote Product Data Service
  * Purpose: Dịch vụ kết nối và gọi API DummyJSON (lấy danh sách sản phẩm, phân trang, chi tiết sản phẩm, danh mục).
  */

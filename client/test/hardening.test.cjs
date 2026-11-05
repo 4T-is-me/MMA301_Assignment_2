@@ -1,3 +1,6 @@
+/**
+ * Author: trangtttce191027
+ */
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { createHooks, loadModule } = require('./harness.cjs');

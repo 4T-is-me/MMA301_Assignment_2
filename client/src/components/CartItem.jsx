@@ -1,3 +1,6 @@
+/**
+ * Author: trangtttce191027
+ */
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useTheme } from "../contexts/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";

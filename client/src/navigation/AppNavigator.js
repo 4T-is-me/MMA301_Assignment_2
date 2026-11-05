@@ -1,3 +1,6 @@
+/**
+ * Author: trangtttce191027
+ */
 import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';

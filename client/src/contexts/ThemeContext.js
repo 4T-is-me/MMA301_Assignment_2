@@ -1,6 +1,6 @@
 /**
  * Account: trangtttce191027
- * Author: Tô Thị Thảo Trang (CE191027)
+ * Author: trangtttce191027
  * Issue / UC: UC01 - Theme State Management & Persistence
  * Purpose: Quản lý chủ đề giao diện sáng/tối (Light/Dark Theme), lưu và khôi phục tùy chọn người dùng từ AsyncStorage (@app_theme).
  */

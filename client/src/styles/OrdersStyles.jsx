@@ -1,3 +1,6 @@
+/**
+ * Author: trangtttce191027
+ */
 
 import { StyleSheet } from 'react-native';
 

@@ -1,6 +1,6 @@
 /**
  * Account: trangtttce191027
- * Author: Tô Thị Thảo Trang (CE191027)
+ * Author: trangtttce191027
  * Issue / UC: UC03 - Firebase Cloud Firestore Wishlist Service
  * Purpose: Dịch vụ CRUD danh sách sản phẩm yêu thích trên Cloud Firestore theo đường dẫn người dùng riêng users/{uid}/wishlist.
  */

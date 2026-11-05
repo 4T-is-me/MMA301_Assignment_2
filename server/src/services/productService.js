@@ -1,3 +1,6 @@
+/**
+ * Author: trangtttce191027
+ */
 const API_URL = 'https://dummyjson.com/products';
 
 export const getAllProducts = async (signal) => {

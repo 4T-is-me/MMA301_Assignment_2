@@ -1,3 +1,6 @@
+/**
+ * Author: trangtttce191027
+ */
 // Runs the real module with mocked native/service boundaries. This is a hook
 // lifecycle simulator, not a renderer or evidence of device execution.
 /* global __dirname */

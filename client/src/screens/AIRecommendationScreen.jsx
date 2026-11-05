@@ -1,6 +1,6 @@
 /**
  * Account: trangtttce191027
- * Author: Tô Thị Thảo Trang (CE191027)
+ * Author: trangtttce191027
  * Issue / UC: UC06 - Gemini AI Product Recommendation Screen
  * Purpose: Màn hình tìm kiếm gợi ý sản phẩm thông minh bằng ngôn ngữ tự nhiên tích hợp Google Gemini AI qua Express backend.
  */

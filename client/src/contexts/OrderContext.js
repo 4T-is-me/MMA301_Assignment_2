@@ -1,6 +1,6 @@
 /**
  * Account: trangtttce191027
- * Author: Tô Thị Thảo Trang (CE191027)
+ * Author: trangtttce191027
  * Issue / UC: UC04 - Orders State Management & Storage Persistence
  * Purpose: Quản lý danh sách lịch sử đơn hàng, đồng bộ hóa tuần tự (serialized saves) với AsyncStorage (@techstore_order).
  */
